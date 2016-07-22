@@ -2,7 +2,10 @@
 
 #include "stdafx.h"
 
-// Constants
+// Constants - Drive information
+#define DRIVE_FIRST 'A'
+#define DRIVE_HANDLE_PREFIX "\\\\.\\"
+#define DRIVE_NUM 26
 #define DRIVE_SUFFIX ":\\"
 
 // cStringToLPCWSTR - converts a char * to a LPCWSTR
@@ -39,23 +42,64 @@ int main()
 {
 	// Initialize and find which drives are CD drives
 	DWORD drives = GetLogicalDrives();
-	char curr = 'A';
-	for (int i = 0; i < 26; i++)
+	char ** cdDrives = (char **) calloc(DRIVE_NUM + 1, sizeof(char **));
+	int numCDDrives = 0;
+	char currDriveLetter = DRIVE_FIRST;
+	for (int i = 0; i < DRIVE_NUM; i++)
 	{
 		// Generate drive name
-		std::string driveName = "";
-		driveName += curr;
-		driveName += DRIVE_SUFFIX;
-		const char * driveNameCString = driveName.c_str();
-		printf("%s: ", driveNameCString);
+		char * driveName = (char *) calloc(strlen(DRIVE_SUFFIX) + 2, sizeof(char));
+		sprintf_s(driveName, sizeof(driveName), "%c%s", currDriveLetter, DRIVE_SUFFIX);
+		printf("%s: ", driveName);
 
 		// Determine drive type
-		int type = GetDriveType(cStringToLPCWSTR(driveNameCString));
+		int type = GetDriveType(cStringToLPCWSTR(driveName));
 		printf("%s (%d)\n", driveTypeAsString(type), type);
 
+		// If CD drive, add to list of CD drives
+		if (type == DRIVE_CDROM)
+		{
+			cdDrives[numCDDrives] = (char *) calloc(strlen(DRIVE_HANDLE_PREFIX) + 3, sizeof(char));
+			sprintf_s(cdDrives[numCDDrives], sizeof(char) * (strlen(DRIVE_HANDLE_PREFIX) + 3), "%s%c:", DRIVE_HANDLE_PREFIX, currDriveLetter);
+			numCDDrives++;
+		}
+
 		// Increment drive letter
-		curr++;
+		currDriveLetter++;
 	}
+	printf("\n");
+
+	// Get handles on CD drives
+	HANDLE * cdDriveHandles = (HANDLE *) calloc(numCDDrives + 1, sizeof(HANDLE));
+	for (int i = 0; i < numCDDrives; i++)
+	{
+		printf("CREATING HANDLE ON %s\n", cdDrives[i]);
+		cdDriveHandles[i] = CreateFile(cStringToLPCWSTR(cdDrives[i]), GENERIC_READ,
+			FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING,
+			FILE_ATTRIBUTE_NORMAL, NULL);
+
+		// Ensure handle worked
+		if ((cdDriveHandles[i] == INVALID_HANDLE_VALUE) || (GetLastError() != NO_ERROR))
+			printf("ERROR GETTING HANDLE ON %s\n", cdDrives[i]);
+	}
+	printf("\n");
+
+	// Select drive to work with
+	int selectedDrive = 0; // TODO: Ask user
+	printf("Automatically selecting %s drive\n\n", cdDrives[selectedDrive]);
+
+	// Try opening the tray
+	LPDWORD lpBytesReturned = 0; // Not used but required
+	int result = DeviceIoControl(cdDriveHandles[selectedDrive], IOCTL_STORAGE_EJECT_MEDIA,
+		NULL, 0, NULL, 0, lpBytesReturned, NULL);
+	
+	// Crash here...
+
+	if (result)
+		printf("Ejecting drive...\n");
+	else
+		printf("ERROR EJECTING DRIVE %s\n", cdDrives[selectedDrive]);
+	
 
 	return 0;
 }
