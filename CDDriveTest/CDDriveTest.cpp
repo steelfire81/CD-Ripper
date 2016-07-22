@@ -88,18 +88,8 @@ int main()
 	int selectedDrive = 0; // TODO: Ask user
 	printf("Automatically selecting %s drive\n\n", cdDrives[selectedDrive]);
 
-	// Try opening the tray
-	LPDWORD lpBytesReturned = 0; // Not used but required
-	int result = DeviceIoControl(cdDriveHandles[selectedDrive], IOCTL_STORAGE_EJECT_MEDIA,
-		NULL, 0, NULL, 0, lpBytesReturned, NULL);
-	
-	// Crash here...
-
-	if (result)
-		printf("Ejecting drive...\n");
-	else
-		printf("ERROR EJECTING DRIVE %s\n", cdDrives[selectedDrive]);
-	
+	CDDriveOpenTray(cdDriveHandles[selectedDrive]);
+	CDDriveCloseTray(cdDriveHandles[selectedDrive]);
 
 	return 0;
 }

@@ -11,3 +11,4 @@
 #include <tchar.h>
 
 #include <Windows.h>
+#include "CDDrive.h"
