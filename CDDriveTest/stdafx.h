@@ -10,5 +10,10 @@
 #include <stdio.h>
 #include <tchar.h>
 
+// My includes
 #include <Windows.h>
+#include <Ntddcdrm.h>
 #include "CDDrive.h"
+
+// Method declarations
+LPCWSTR cStringToLPCWSTR(const char * cString);
