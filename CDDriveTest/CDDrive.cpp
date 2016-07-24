@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 //*** INITIALIZATION FUNCTIONS **//
+// CDDriveGetHandles
 // Retrieves a list of handles on CD drives
 HANDLE * CDDriveGetHandles()
 {
@@ -39,6 +40,7 @@ HANDLE * CDDriveGetHandles()
 }
 
 //*** INDIVIDUAL DRIVE FUNCTIONS ***//
+// CDDriveCheckTray
 // Checks if anything is in the CD tray
 BOOL CDDriveCheckTray(HANDLE cdDrive)
 {
@@ -48,24 +50,27 @@ BOOL CDDriveCheckTray(HANDLE cdDrive)
 	return result;
 }
 
+// CDDriveCloseTray
 // Closes the tray of the given CD drive
-int CDDriveCloseTray(HANDLE cdDrive)
+BOOL CDDriveCloseTray(HANDLE cdDrive)
 {
 	DWORD bytesReturned = 0;
-	int result = DeviceIoControl(cdDrive, IOCTL_STORAGE_LOAD_MEDIA, NULL, 0, NULL, 0,
+	BOOL result = DeviceIoControl(cdDrive, IOCTL_STORAGE_LOAD_MEDIA, NULL, 0, NULL, 0,
 		&bytesReturned, NULL);
 	return result;
 }
 
+// CDDriveOpenTray
 // Opens the tray of the given CD drive
-int CDDriveOpenTray(HANDLE cdDrive)
+BOOL CDDriveOpenTray(HANDLE cdDrive)
 {
 	DWORD bytesReturned = 0;
-	int result = DeviceIoControl(cdDrive, IOCTL_STORAGE_EJECT_MEDIA, NULL, 0, NULL, 0,
+	BOOL result = DeviceIoControl(cdDrive, IOCTL_STORAGE_EJECT_MEDIA, NULL, 0, NULL, 0,
 		&bytesReturned, NULL);
 	return result;
 }
 
+// CDDriveRetrieveTOC
 // Returns the table of contents of the CD in the given drive
 CDROM_TOC CDDriveRetrieveTOC(HANDLE cdDrive)
 {
@@ -76,7 +81,7 @@ CDROM_TOC CDDriveRetrieveTOC(HANDLE cdDrive)
 	cdTOCRequest.Reserved2 = 0;
 	cdTOCRequest.Reserved3 = 0;
 	cdTOCRequest.SessionTrack = 0;
-	cdTOCRequest.Msf = false;
+	cdTOCRequest.Msf = true;
 
 	// Output parameters
 	CDROM_TOC tableOfContents;
@@ -89,4 +94,33 @@ CDROM_TOC CDDriveRetrieveTOC(HANDLE cdDrive)
 		fprintf_s(stderr, "ERROR RETRIEVING CD TOC\n");
 
 	return tableOfContents;
+}
+
+//*** CD FUNCTIONS ***//
+// CDGetTracksFromTOC
+// Returns a list of CD_TRACKs from a given table of contents
+CD_TRACK * CDGetTracksFromTOC(CDROM_TOC toc)
+{
+	int numTracks = toc.LastTrack - toc.FirstTrack + 1;
+	CD_TRACK * tracks = (CD_TRACK *) calloc(numTracks, sizeof(CD_TRACK));
+
+	for (int i = 0; i < numTracks; i++)
+	{
+		TRACK_DATA td = toc.TrackData[i];
+		tracks[i].startAddress = td.Address[0] * 60 * 60 * FRAMES_PER_SECOND +
+			td.Address[1] * 60 * FRAMES_PER_SECOND + td.Address[2] * FRAMES_PER_SECOND +
+			td.Address[3] - FRAMES_OFFSET;
+	}
+
+	for (int i = 0; i < numTracks - 1; i++)
+		tracks[i].duration = tracks[i + 1].startAddress - tracks[i].startAddress;
+
+	// For last track, go one beyond final track
+	TRACK_DATA tdEnd = toc.TrackData[numTracks];
+	ULONG cdEnd = tdEnd.Address[0] * 60 * 60 * FRAMES_PER_SECOND +
+		tdEnd.Address[1] * 60 * FRAMES_PER_SECOND + tdEnd.Address[2] * FRAMES_PER_SECOND +
+		tdEnd.Address[3] - FRAMES_OFFSET;
+	tracks[numTracks - 1].duration = cdEnd - tracks[numTracks - 1].startAddress;
+
+	return tracks;
 }

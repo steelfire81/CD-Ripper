@@ -44,8 +44,15 @@ int main()
 	}
 
 	CDROM_TOC toc = CDDriveRetrieveTOC(cdDriveHandles[selectedDrive]);
+	CD_TRACK * tracks = CDGetTracksFromTOC(toc);
 
-	printf("%d %d %d %d\n", toc.FirstTrack, toc.LastTrack, toc.Length[0], toc.Length[1]);
+	int numTracks = toc.LastTrack - toc.FirstTrack + 1;
+	for (int i = 0; i < numTracks; i++)
+	{
+		printf("Track %d:\n", i + 1);
+		printf("\tStart: %ld frames\n", tracks[i].startAddress);
+		printf("\tDuration: %ld frames\n", tracks[i].duration);
+	}
 
 	return 0;
 }
