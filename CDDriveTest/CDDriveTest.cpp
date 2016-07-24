@@ -54,6 +54,10 @@ int main()
 		printf("\tDuration: %ld frames\n", tracks[i].duration);
 	}
 
+	unsigned char * data = CDDriveReadRawTrack(cdDriveHandles[selectedDrive], tracks[0]);
+	if (data != NULL)
+		printf("GG\n");
+
 	return 0;
 }
 

@@ -70,11 +70,52 @@ BOOL CDDriveOpenTray(HANDLE cdDrive)
 	return result;
 }
 
+// CDDriveReadRawTrack
+// Reads raw data from a CD track
+unsigned char * CDDriveReadRawTrack(HANDLE cdDrive, CD_TRACK track)
+{
+	unsigned char * data = (unsigned char *)calloc(track.duration * BYTES_PER_SECTOR,
+		sizeof(unsigned char));
+	DWORD bytesReturned = 0;
+	
+	RAW_READ_INFO readRequest;
+	readRequest.SectorCount = SECTORS_PER_READ;
+	readRequest.TrackMode = CDDA;
+
+	long i;
+	for (i = 0; i < (track.duration / SECTORS_PER_READ); i++)
+	{
+		readRequest.DiskOffset.QuadPart = (track.startAddress + (i * SECTORS_PER_READ)) * DISK_OFFSET_MULTIPLIER;
+		BOOL result = DeviceIoControl(cdDrive, IOCTL_CDROM_RAW_READ, &readRequest,
+			sizeof(RAW_READ_INFO), data + (i * SECTORS_PER_READ * BYTES_PER_SECTOR),
+			SECTORS_PER_READ * BYTES_PER_SECTOR, &bytesReturned, NULL);
+		if (!result)
+		{
+			fprintf_s(stderr, "ERROR READING TRACK RAW DATA\n");
+			return NULL;
+		}
+	}
+
+	// Read leftover sectors
+	ULONG leftoverSectors = track.duration % SECTORS_PER_READ;
+	readRequest.SectorCount = leftoverSectors;
+	readRequest.DiskOffset.QuadPart = (track.startAddress + (i * SECTORS_PER_READ)) * DISK_OFFSET_MULTIPLIER;
+	BOOL result = DeviceIoControl(cdDrive, IOCTL_CDROM_RAW_READ, &readRequest,
+		sizeof(RAW_READ_INFO), data + (i * SECTORS_PER_READ * BYTES_PER_SECTOR),
+		leftoverSectors * BYTES_PER_SECTOR, &bytesReturned, NULL);
+	if (!result)
+	{
+		fprintf_s(stderr, "ERROR READING TRACK RAW DATA (END)\n");
+		return NULL;
+	}
+
+	return data;
+}
+
 // CDDriveRetrieveTOC
 // Returns the table of contents of the CD in the given drive
 CDROM_TOC CDDriveRetrieveTOC(HANDLE cdDrive)
 {
-	// Request
 	CDROM_READ_TOC_EX cdTOCRequest;
 	cdTOCRequest.Format = CDROM_READ_TOC_EX_FORMAT_TOC;
 	cdTOCRequest.Reserved1 = 0;
@@ -83,13 +124,12 @@ CDROM_TOC CDDriveRetrieveTOC(HANDLE cdDrive)
 	cdTOCRequest.SessionTrack = 0;
 	cdTOCRequest.Msf = true;
 
-	// Output parameters
 	CDROM_TOC tableOfContents;
 	DWORD bytesReturned = 0;
+
 	BOOL result = DeviceIoControl(cdDrive, IOCTL_CDROM_READ_TOC_EX, &cdTOCRequest,
 		sizeof(CDROM_READ_TOC_EX), &tableOfContents, sizeof(CDROM_TOC),
 			&bytesReturned, NULL);
-
 	if (!result)
 		fprintf_s(stderr, "ERROR RETRIEVING CD TOC\n");
 
@@ -115,7 +155,7 @@ CD_TRACK * CDGetTracksFromTOC(CDROM_TOC toc)
 	for (int i = 0; i < numTracks - 1; i++)
 		tracks[i].duration = tracks[i + 1].startAddress - tracks[i].startAddress;
 
-	// For last track, go one beyond final track
+	// For last track, find start of one beyond final track
 	TRACK_DATA tdEnd = toc.TrackData[numTracks];
 	ULONG cdEnd = tdEnd.Address[0] * 60 * 60 * FRAMES_PER_SECOND +
 		tdEnd.Address[1] * 60 * FRAMES_PER_SECOND + tdEnd.Address[2] * FRAMES_PER_SECOND +
