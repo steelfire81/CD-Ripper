@@ -15,3 +15,4 @@ HANDLE * CDDriveGetHandles();
 BOOL CDDriveCheckTray(HANDLE cdDrive);
 int CDDriveCloseTray(HANDLE cdDrive);
 int CDDriveOpenTray(HANDLE cdDrive);
+CDROM_TOC CDDriveRetrieveTOC(HANDLE cdDrive);

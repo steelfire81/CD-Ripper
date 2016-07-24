@@ -65,3 +65,28 @@ int CDDriveOpenTray(HANDLE cdDrive)
 		&bytesReturned, NULL);
 	return result;
 }
+
+// Returns the table of contents of the CD in the given drive
+CDROM_TOC CDDriveRetrieveTOC(HANDLE cdDrive)
+{
+	// Request
+	CDROM_READ_TOC_EX cdTOCRequest;
+	cdTOCRequest.Format = CDROM_READ_TOC_EX_FORMAT_TOC;
+	cdTOCRequest.Reserved1 = 0;
+	cdTOCRequest.Reserved2 = 0;
+	cdTOCRequest.Reserved3 = 0;
+	cdTOCRequest.SessionTrack = 0;
+	cdTOCRequest.Msf = false;
+
+	// Output parameters
+	CDROM_TOC tableOfContents;
+	DWORD bytesReturned = 0;
+	BOOL result = DeviceIoControl(cdDrive, IOCTL_CDROM_READ_TOC_EX, &cdTOCRequest,
+		sizeof(CDROM_READ_TOC_EX), &tableOfContents, sizeof(CDROM_TOC),
+			&bytesReturned, NULL);
+
+	if (!result)
+		fprintf_s(stderr, "ERROR RETRIEVING CD TOC\n");
+
+	return tableOfContents;
+}

@@ -38,7 +38,14 @@ int main()
 	if (hasCD)
 		printf("CD Found\n");
 	else
+	{
 		printf("No CD Found\n");
+		return 0;
+	}
+
+	CDROM_TOC toc = CDDriveRetrieveTOC(cdDriveHandles[selectedDrive]);
+
+	printf("%d %d %d %d\n", toc.FirstTrack, toc.LastTrack, toc.Length[0], toc.Length[1]);
 
 	return 0;
 }
