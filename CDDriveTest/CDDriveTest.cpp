@@ -54,9 +54,12 @@ int main()
 		printf("\tDuration: %ld frames\n", tracks[i].duration);
 	}
 
-	unsigned char * data = CDDriveReadRawTrack(cdDriveHandles[selectedDrive], tracks[0]);
-	if (data != NULL)
-		printf("GG\n");
+	BOOL result = CDDriveExtractTrackToWAV(cdDriveHandles[selectedDrive], tracks[0], ".\\cherub.wav");
+
+	if (result)
+		printf("yay\n");
+	else
+		printf("nay\n");
 
 	return 0;
 }

@@ -13,6 +13,18 @@
 #define FRAMES_PER_SECOND 75
 #define SECTORS_PER_READ 10
 
+// Constants - WAV Header
+#define WAV_BITS_PER_SAMPLE 16
+#define WAV_CD_SAMPLE_RATE 44100
+#define WAV_CHANNELS_MONO 1
+#define WAV_CHANNELS_STEREO 2
+#define WAV_CHUNK_SIZE_OFFSET 36
+#define WAV_CHUNKID "RIFF"
+#define WAV_FORMAT "WAVE"
+#define WAV_SUBCHUNK_1_ID "fmt "
+#define WAV_SUBCHUNK_1_SIZE 16
+#define WAV_SUBCHUNK_2_ID "data"
+
 // Structs
 typedef struct CD_TRACK {
 	ULONG startAddress;
@@ -25,6 +37,7 @@ HANDLE * CDDriveGetHandles();
 // Individual Drive Functions
 BOOL CDDriveCheckTray(HANDLE cdDrive);
 BOOL CDDriveCloseTray(HANDLE cdDrive);
+BOOL CDDriveExtractTrackToWAV(HANDLE cdDrive, CD_TRACK track, char * path);
 BOOL CDDriveOpenTray(HANDLE cdDrive);
 unsigned char * CDDriveReadRawTrack(HANDLE cdDrive, CD_TRACK track);
 CDROM_TOC CDDriveRetrieveTOC(HANDLE cdDrive);
