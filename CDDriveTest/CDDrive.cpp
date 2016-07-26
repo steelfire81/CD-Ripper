@@ -62,8 +62,12 @@ BOOL CDDriveCloseTray(HANDLE cdDrive)
 
 // CDDriveExtractTrack
 // Extracts a track from a CD drive and saves it as a WAV
-BOOL CDDriveExtractTrackToWAV(HANDLE cdDrive, CD_TRACK track, char * path)
+BOOL CDDriveExtractTrackToWAV(HANDLE cdDrive, CD_TRACK track, char * dir, char * filename)
 {
+	char * path = (char *) calloc(strlen(dir) + strlen(filename) + strlen(EXT_WAV) + 2, sizeof(char));
+	sprintf_s(path, sizeof(char) * (strlen(dir) + strlen(filename) + strlen(EXT_WAV) + 2), "%s\\%s%s",
+		dir, filename, EXT_WAV);
+
 	HANDLE outFile = CreateFile(cStringToLPCWSTR(path), GENERIC_WRITE, 0, NULL, CREATE_NEW,
 		FILE_ATTRIBUTE_NORMAL, NULL);
 	if (GetLastError() == ERROR_FILE_EXISTS)
@@ -131,15 +135,20 @@ BOOL CDDriveExtractTrackToWAV(HANDLE cdDrive, CD_TRACK track, char * path)
 	}
 
 	ULONG leftoverSectors = track.duration % SECTORS_PER_READ;
-	readRequest.SectorCount = leftoverSectors;
-	readRequest.DiskOffset.QuadPart = (track.startAddress + (i * SECTORS_PER_READ)) * DISK_OFFSET_MULTIPLIER;
-	BOOL result = DeviceIoControl(cdDrive, IOCTL_CDROM_RAW_READ, &readRequest,
-		sizeof(RAW_READ_INFO), data, leftoverSectors * BYTES_PER_SECTOR,
-		&bytesReturned, NULL);
-	if (!result)
-		return FALSE;
+	if (leftoverSectors > 0)
+	{
+		readRequest.SectorCount = leftoverSectors;
+		readRequest.DiskOffset.QuadPart = (track.startAddress + (i * SECTORS_PER_READ)) * DISK_OFFSET_MULTIPLIER;
+		BOOL result = DeviceIoControl(cdDrive, IOCTL_CDROM_RAW_READ, &readRequest,
+			sizeof(RAW_READ_INFO), data, leftoverSectors * BYTES_PER_SECTOR,
+			&bytesReturned, NULL);
+		if (!result)
+			return FALSE;
+		WriteFile(outFile, (LPCVOID)&data[0], leftoverSectors * BYTES_PER_SECTOR, &bytesWritten, NULL);
+	}
 
-	WriteFile(outFile, (LPCVOID)&data[0], leftoverSectors * BYTES_PER_SECTOR, &bytesWritten, NULL);
+	free(path);
+	free(data);
 
 	return CloseHandle(outFile);
 }

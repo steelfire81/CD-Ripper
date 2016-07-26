@@ -27,12 +27,7 @@ char * driveTypeAsString(int type)
 int main()
 {
 	HANDLE * cdDriveHandles = CDDriveGetHandles();
-
-	// Select drive to work with
 	int selectedDrive = 0; // TODO: Ask user
-
-	//CDDriveOpenTray(cdDriveHandles[selectedDrive]);
-	//CDDriveCloseTray(cdDriveHandles[selectedDrive]);
 	
 	BOOL hasCD = CDDriveCheckTray(cdDriveHandles[selectedDrive]);
 	if (hasCD)
@@ -52,14 +47,18 @@ int main()
 		printf("Track %d:\n", i + 1);
 		printf("\tStart: %ld frames\n", tracks[i].startAddress);
 		printf("\tDuration: %ld frames\n", tracks[i].duration);
+		
+		char * filename = (char *) calloc(strlen("Track") + 4, sizeof(char));
+		sprintf_s(filename, sizeof(char) * (strlen("Track") + 4), "%s%d", "Track", i + 1);
+		BOOL result = CDDriveExtractTrackToWAV(cdDriveHandles[selectedDrive], tracks[i], ".", filename);
+		if (result)
+			printf("\tSUCCESS!\n");
+		else
+			printf("\tCould not extract track %d\n", i + 1);
+
+		free(filename);
 	}
-
-	BOOL result = CDDriveExtractTrackToWAV(cdDriveHandles[selectedDrive], tracks[0], ".\\cherub.wav");
-
-	if (result)
-		printf("yay\n");
-	else
-		printf("nay\n");
+	printf("ALL TASKS COMPLETED\n");
 
 	return 0;
 }

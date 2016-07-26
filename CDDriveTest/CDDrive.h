@@ -2,6 +2,9 @@
 
 #include "stdafx.h"
 
+// Constants - Extensions
+#define EXT_WAV ".wav"
+
 // Constants
 #define BYTES_PER_SECTOR 2352
 #define DISK_OFFSET_MULTIPLIER 2048
@@ -37,7 +40,7 @@ HANDLE * CDDriveGetHandles();
 // Individual Drive Functions
 BOOL CDDriveCheckTray(HANDLE cdDrive);
 BOOL CDDriveCloseTray(HANDLE cdDrive);
-BOOL CDDriveExtractTrackToWAV(HANDLE cdDrive, CD_TRACK track, char * path);
+BOOL CDDriveExtractTrackToWAV(HANDLE cdDrive, CD_TRACK track, char * dir, char * filename);
 BOOL CDDriveOpenTray(HANDLE cdDrive);
 unsigned char * CDDriveReadRawTrack(HANDLE cdDrive, CD_TRACK track);
 CDROM_TOC CDDriveRetrieveTOC(HANDLE cdDrive);
