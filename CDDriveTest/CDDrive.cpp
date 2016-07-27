@@ -64,10 +64,7 @@ BOOL CDDriveCloseTray(HANDLE cdDrive)
 // Extracts a track from a CD drive and saves it as a WAV
 BOOL CDDriveExtractTrackToWAV(HANDLE cdDrive, CD_TRACK track, char * dir, char * filename)
 {
-	char * path = (char *) calloc(strlen(dir) + strlen(filename) + strlen(EXT_WAV) + 2, sizeof(char));
-	sprintf_s(path, sizeof(char) * (strlen(dir) + strlen(filename) + strlen(EXT_WAV) + 2), "%s\\%s%s",
-		dir, filename, EXT_WAV);
-
+	char * path = getFilePath(dir, filename, EXT_WAV);
 	HANDLE outFile = CreateFile(cStringToLPCWSTR(path), GENERIC_WRITE, 0, NULL, CREATE_NEW,
 		FILE_ATTRIBUTE_NORMAL, NULL);
 	if (GetLastError() == ERROR_FILE_EXISTS)

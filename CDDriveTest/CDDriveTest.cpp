@@ -2,33 +2,13 @@
 
 #include "stdafx.h"
 
-// driveTypeAsString - takes an int containing drive type and converts to string for debug
-char * driveTypeAsString(int type)
-{
-	if (type == DRIVE_UNKNOWN)
-		return "UNKNOWN DRIVE TYPE";
-	else if (type == DRIVE_NO_ROOT_DIR)
-		return "NO VOLUME MOUNTED";
-	else if (type == DRIVE_REMOVABLE)
-		return "REMOVABLE MEDIA DRIVE";
-	else if (type == DRIVE_FIXED)
-		return "FIXED MEDIA DRIVE";
-	else if (type == DRIVE_REMOTE)
-		return "NETWORK DRIVE";
-	else if (type == DRIVE_CDROM)
-		return "CD DRIVE";
-	else if (type == DRIVE_RAMDISK)
-		return "RAM DISK";
-	else
-		return "INVALID DRIVE TYPE";
-}
-
 // main
 int main()
 {
+	/*
 	HANDLE * cdDriveHandles = CDDriveGetHandles();
 	int selectedDrive = 0; // TODO: Ask user
-	
+
 	BOOL hasCD = CDDriveCheckTray(cdDriveHandles[selectedDrive]);
 	if (hasCD)
 		printf("CD Found\n");
@@ -59,6 +39,10 @@ int main()
 		free(filename);
 	}
 	printf("ALL TASKS COMPLETED\n");
+	*/
+
+	AudioConverterInit();
+	AudioConverterInitializeLAME(2, 44100, 320, JOINT_STEREO, LAME_QUALITY_HIGH);
 
 	return 0;
 }
