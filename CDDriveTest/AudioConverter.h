@@ -31,6 +31,7 @@ typedef struct MP3_TAGS {
 #define ID3_IDENTIFIER "ID3"
 #define ID3_MAJOR_VERSION 3
 #define ID3_MINOR_VERSION 0
+#define ID3_YEAR_MAX 10000 // non-inclusive
 
 // Constants - ID3 Tags
 #define ID3_ALBUM "TALB"
@@ -47,9 +48,6 @@ typedef struct MP3_TAGS {
 #define ID3_YEAR "TYER"
 
 // Constants - LAME
-#define LAME_MODE_MONO MONO
-#define LAME_MODE_STEREO STEREO
-#define LAME_MODE_JOINT_STEREO JOINT_STEREO
 #define LAME_QUALITY_HIGH 2
 #define LAME_QUALITY_DEFAULT 3
 #define LAME_QUALITY_NORMAL 5
@@ -60,5 +58,5 @@ BOOL AudioConverterInit();
 
 // MP3 Functions
 BOOL AudioConverterWAVToMP3(HANDLE wavFile, BOOL del, char * dir, char * filename, MP3_TAGS tags);
-BOOL AudioConverterInitializeLAME(int numChannels, int sampleRate, int bitrate, MPEG_mode_e mode, int quality);
+BOOL AudioConverterInitializeLAME(int numChannels, int sampleRate, int bitrate, int mode, int quality);
 BOOL AudioConverterWriteID3Frame(HANDLE mp3File, char * frameID, char * data, BOOL readonly);

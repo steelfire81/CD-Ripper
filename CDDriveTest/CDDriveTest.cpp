@@ -41,9 +41,6 @@ int main()
 	printf("ALL TASKS COMPLETED\n");
 	*/
 
-	AudioConverterInit();
-	AudioConverterInitializeLAME(2, 44100, 320, JOINT_STEREO, LAME_QUALITY_HIGH);
-
 	return 0;
 }
 

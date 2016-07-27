@@ -13,10 +13,12 @@
 // My includes
 #include <Windows.h>
 #include <Ntddcdrm.h>
-#include <ctype.h>
-#include "lame.h"
+#include <math.h>
 #include "AudioConverter.h"
 #include "CDDrive.h"
+
+// Macro Functions
+#define STRLEN_INT(x) (x == 0? 1 : ((int) (log10(x) + 1)))
 
 // Method declarations
 LPCWSTR cStringToLPCWSTR(const char * cString);

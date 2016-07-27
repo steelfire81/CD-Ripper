@@ -1,18 +1,11 @@
 #include "stdafx.h"
 
-// Static Variables
-static lame_global_flags * lameFlags;
-
 //*** INITIALIZATION FUNCTIONS ***//
 // AudioConverterInit
 // Initialize all necessary audio converters
 BOOL AudioConverterInit()
 {
-	lameFlags = lame_init();
-	if (lameFlags == NULL)
-		return FALSE;
-
-	return TRUE;
+	return FALSE;
 }
 
 //*** MP3 FUNCTIONS ***//
@@ -51,48 +44,66 @@ BOOL AudioConverterWAVToMP3(HANDLE wavFile, BOOL del, char * dir, char * filenam
 	if (tags.album != NULL)
 		AudioConverterWriteID3Frame(outFile, ID3_ALBUM, tags.album, FALSE);
 	if (tags.albumArtist != NULL)
-	{
-
-	}
+		AudioConverterWriteID3Frame(outFile, ID3_ALBUM_ARTIST, tags.albumArtist, FALSE);
 	if (tags.artist != NULL)
-	{
-		
-	}
+		AudioConverterWriteID3Frame(outFile, ID3_ARTIST, tags.artist, FALSE);
 	if (tags.comment != NULL)
-	{
-
-	}
+		AudioConverterWriteID3Frame(outFile, ID3_COMMENT, tags.comment, FALSE);
 	if (tags.compilation)
-	{
-
-	}
+		AudioConverterWriteID3Frame(outFile, ID3_COMPILATION, "1", FALSE);
 	if (tags.composer != NULL)
+		AudioConverterWriteID3Frame(outFile, ID3_COMPOSER, tags.composer, FALSE);
+	if (tags.diskNumber > 0)
 	{
+		char * diskNumberField;
+		if (tags.diskNumberTotal > 0)
+		{
+			diskNumberField = (char *)calloc(STRLEN_INT(tags.diskNumber) + STRLEN_INT(tags.diskNumberTotal)
+				+ 2, sizeof(char));
+			sprintf_s(diskNumberField, sizeof(char) * (STRLEN_INT(tags.diskNumber) + STRLEN_INT(tags.diskNumberTotal)
+				+ 2), "%d/%d", tags.diskNumber, tags.diskNumberTotal);
+		}
+		else // Just print disk number
+		{
+			diskNumberField = (char *)calloc(STRLEN_INT(tags.diskNumber) + 1, sizeof(char));
+			sprintf_s(diskNumberField, sizeof(char) * (STRLEN_INT(tags.diskNumber) + 1), "%d", tags.diskNumber);
+		}
 
-	}
-	if ((tags.diskNumber > 0) || (tags.diskNumberTotal > 0))
-	{
-		
+		AudioConverterWriteID3Frame(outFile, ID3_DISK_NUMBER, diskNumberField, FALSE);
+		free(diskNumberField);
 	}
 	if (tags.encodedBy != NULL)
-	{
-
-	}
+		AudioConverterWriteID3Frame(outFile, ID3_ENCODED_BY, tags.encodedBy, TRUE);
 	if (tags.genre != NULL)
-	{
-
-	}
+		AudioConverterWriteID3Frame(outFile, ID3_GENRE, tags.genre, FALSE);
 	if (tags.title != NULL)
+		AudioConverterWriteID3Frame(outFile, ID3_TITLE, tags.title, FALSE);
+	if (tags.trackNumber > 0)
 	{
+		char * trackNumberField;
+		if (tags.trackNumberTotal > 0)
+		{
+			trackNumberField = (char *)calloc(STRLEN_INT(tags.trackNumber) + STRLEN_INT(tags.trackNumberTotal)
+				+ 2, sizeof(char));
+			sprintf_s(trackNumberField, sizeof(char) * (STRLEN_INT(tags.trackNumber) + STRLEN_INT(tags.trackNumberTotal)
+				+ 2), "%d/%d", tags.trackNumber, tags.trackNumberTotal);
+		}
+		else // Just print track number
+		{
+			trackNumberField = (char *)calloc(STRLEN_INT(tags.trackNumber) + 1, sizeof(char));
+			sprintf_s(trackNumberField, sizeof(char) * (STRLEN_INT(tags.trackNumber) + 1), "%d", tags.trackNumber);
+		}
 
+		AudioConverterWriteID3Frame(outFile, ID3_DISK_NUMBER, trackNumberField, FALSE);
+		free(trackNumberField);
 	}
-	if ((tags.trackNumber > 0) || (tags.trackNumberTotal > 0))
+	if ((tags.year > 0) && (tags.year < ID3_YEAR_MAX))
 	{
-
-	}
-	if (tags.year > 0)
-	{
-
+		// Year must always be a 4 character numeric string
+		char * yearField = (char *) calloc(5, sizeof(char));
+		sprintf_s(yearField, sizeof(char) * 5, "%04d", tags.year);
+		AudioConverterWriteID3Frame(outFile, ID3_YEAR, yearField, FALSE);
+		free(yearField);
 	}
 
 	free(path);
@@ -101,16 +112,9 @@ BOOL AudioConverterWAVToMP3(HANDLE wavFile, BOOL del, char * dir, char * filenam
 
 // AudioConverterInitializeLAME
 // Initialize the LAME MP3 encoder with desired settings
-BOOL AudioConverterInitializeLAME(int numChannels, int sampleRate, int bitrate, MPEG_mode_e mode, int quality)
+BOOL AudioConverterInitializeLAME(int numChannels, int sampleRate, int bitrate, int mode, int quality)
 {
-	lame_set_num_channels(lameFlags, numChannels);
-	lame_set_in_samplerate(lameFlags, sampleRate);
-	lame_set_brate(lameFlags, bitrate);
-	lame_set_mode(lameFlags, mode);
-	lame_set_quality(lameFlags, quality);
-
-	int result = lame_init_params(lameFlags);
-	return (result >= 0);
+	return FALSE;
 }
 
 // AudioConverterWriteID3Frame
