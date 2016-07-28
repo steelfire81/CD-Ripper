@@ -13,7 +13,8 @@ HANDLE * CDDriveGetHandles()
 	for (int i = 0; i < DRIVE_NUM; i++)
 	{
 		char * driveName = (char *)calloc(strlen(DRIVE_SUFFIX) + 2, sizeof(char));
-		sprintf_s(driveName, sizeof(driveName), "%c%s", currDriveLetter, DRIVE_SUFFIX);
+		sprintf_s(driveName, sizeof(char) * (strlen(DRIVE_SUFFIX) + 2), "%c%s",
+			currDriveLetter, DRIVE_SUFFIX);
 		if (GetDriveType(cStringToLPCWSTR(driveName)) == DRIVE_CDROM)
 		{
 			char * driveHandleName = (char *) calloc(strlen(DRIVE_HANDLE_PREFIX) + 3, sizeof(char));
@@ -60,7 +61,7 @@ BOOL CDDriveCloseTray(HANDLE cdDrive)
 	return result;
 }
 
-// CDDriveExtractTrack
+// CDDriveExtractTrackToWAV
 // Extracts a track from a CD drive and saves it as a WAV
 BOOL CDDriveExtractTrackToWAV(HANDLE cdDrive, CD_TRACK track, char * dir, char * filename)
 {

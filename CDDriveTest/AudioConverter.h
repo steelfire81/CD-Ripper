@@ -48,15 +48,17 @@ typedef struct MP3_TAGS {
 #define ID3_YEAR "TYER"
 
 // Constants - LAME
+#define LAME_CHANNELS_MONO 1
+#define LAME_CHANNELS_STEREO 2
 #define LAME_QUALITY_HIGH 2
 #define LAME_QUALITY_DEFAULT 3
 #define LAME_QUALITY_NORMAL 5
 #define LAME_QUALITY_FAST 7
 
-// Initialization Functions
-BOOL AudioConverterInit();
+// Constants - MP3 Encoding
+#define SAMPLES_PER_READ 20
 
-// MP3 Functions
-BOOL AudioConverterWAVToMP3(HANDLE wavFile, BOOL del, char * dir, char * filename, MP3_TAGS tags);
-BOOL AudioConverterInitializeLAME(int numChannels, int sampleRate, int bitrate, int mode, int quality);
+// LAME / MP3 Functions
+BOOL AudioConverterInitializeLAME(int numChannels, int sampleRate, int bitrate, MPEG_mode mode, int quality);
+BOOL AudioConverterWAVToMP3(char * wavdir, char * wavfilename, BOOL del, char * dir, char * filename, MP3_TAGS tags, int bitrate, MPEG_mode mode, int quality);
 BOOL AudioConverterWriteID3Frame(HANDLE mp3File, char * frameID, char * data, BOOL readonly);
