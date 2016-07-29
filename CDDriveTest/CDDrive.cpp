@@ -88,6 +88,7 @@ BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char *
 	}
 	lame_set_num_channels(lameFlags, CD_NUM_CHANNELS);
 	lame_set_in_samplerate(lameFlags, CD_SAMPLE_RATE);
+	lame_set_VBR(lameFlags, vbr_off); // TODO: Let user set VBR mode
 	lame_set_brate(lameFlags, 320); // TODO: Let user set bitrate
 	lame_set_mode(lameFlags, JOINT_STEREO); // TODO: Let user set mode
 	lame_set_quality(lameFlags, LAME_QUALITY_HIGH); // TODO: Let user set quality
@@ -154,7 +155,6 @@ BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char *
 		free(mp3Buffer);
 	}
 
-	printf("leftovers\n");
 	long leftoverSectors = track.duration % SECTORS_PER_READ;
 	if (leftoverSectors > 0)
 	{
@@ -201,19 +201,44 @@ BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char *
 		free(mp3Buffer);
 	}
 
-	CloseHandle(outFile);
-
-	printf("leftovers done %s\n", path);
-	FILE * file;
-	int fileOpen = fopen_s(&file, path, "r+");
-	if (fileOpen != 0)
+	unsigned char * leftoverBuffer = (unsigned char *) calloc(LAME_LEFTOVER_BUFFSIZE, sizeof(unsigned char));
+	int leftoverBytes = lame_encode_flush(lameFlags, leftoverBuffer, LAME_LEFTOVER_BUFFSIZE);
+	if (leftoverBytes > 0)
 	{
-		fprintf_s(stderr, "ERROR WRITING XING VBR/INFO TAG\n");
+		result = WriteFile(outFile, (LPCVOID)&leftoverBuffer[0], leftoverBytes, &bytesWritten, NULL);
+		if (!result)
+		{
+			fprintf_s(stderr, "ERROR FLUSHING LAME BUFFER\n");
+			return FALSE;
+		}
+	}
+	free(leftoverBuffer);
+
+	unsigned char * firstFrameBuffer = (unsigned char *) calloc(LAME_VBR_FRAME_BUFFSIZE, sizeof(unsigned char));
+	int firstFrameBytes = lame_get_lametag_frame(lameFlags, firstFrameBuffer, sizeof(unsigned char) * LAME_VBR_FRAME_BUFFSIZE);
+	if (firstFrameBytes > LAME_VBR_FRAME_BUFFSIZE)
+	{
+		fprintf_s(stderr, "ERROR: FIRST FRAME BUFFSIZE TOO SMALL\n");
 		return FALSE;
 	}
-	lame_mp3_tags_fid(lameFlags, file);
-	fclose(file);
+	else
+	{
+		DWORD movePointerResult = SetFilePointer(outFile, 0, NULL, FILE_BEGIN);
+		if (movePointerResult == INVALID_SET_FILE_POINTER)
+		{
+			fprintf_s(stderr, "whoops\n");
+			return FALSE;
+		}
 
+		result = WriteFile(outFile, (LPCVOID)&firstFrameBuffer[0], firstFrameBytes, &bytesWritten, NULL);
+		if (!result)
+		{
+			fprintf_s(stderr, "ERROR WRITING FIRST LAME FRAME\n");
+			return FALSE;
+		}
+	}
+
+	CloseHandle(outFile);
 
 	free(path);
 	free(data);

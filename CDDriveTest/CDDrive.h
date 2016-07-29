@@ -17,6 +17,8 @@
 #define DRIVE_SUFFIX ":\\"
 #define FRAMES_OFFSET 150
 #define FRAMES_PER_SECOND 75
+#define LAME_LEFTOVER_BUFFSIZE 7200
+#define LAME_VBR_FRAME_BUFFSIZE 7200
 #define SECTORS_PER_READ 10
 
 // Constants - WAV Header
