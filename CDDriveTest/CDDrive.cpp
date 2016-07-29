@@ -154,6 +154,7 @@ BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char *
 		free(mp3Buffer);
 	}
 
+	printf("leftovers\n");
 	long leftoverSectors = track.duration % SECTORS_PER_READ;
 	if (leftoverSectors > 0)
 	{
@@ -167,11 +168,22 @@ BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char *
 			return FALSE;
 		}
 
+		int currShort = 0;
+		short * leftSamples = (short *)calloc(bytesReturned / 2, sizeof(short));
+		short * rightSamples = (short *)calloc(bytesReturned / 2, sizeof(short));
+		for (int s = 0; s < (bytesReturned / 2); s++)
+		{
+			leftSamples[s] = data[currShort];
+			currShort++;
+			rightSamples[s] = data[currShort];
+			currShort++;
+		}
+
 		int numSamples = (leftoverSectors * BYTES_PER_SECTOR) / (CD_BITS_PER_SAMPLE / 8);
 		int mp3Buffsize = 1.25 * numSamples + 7200; // from LAME documentation
 		unsigned char * mp3Buffer = (unsigned char *)calloc(mp3Buffsize, sizeof(unsigned char));
 
-		int lameBytes = lame_encode_buffer(lameFlags, (short *)data, (short *)data, numSamples,
+		int lameBytes = lame_encode_buffer(lameFlags, leftSamples, rightSamples, numSamples,
 			mp3Buffer, mp3Buffsize);
 		if (lameBytes < 0)
 		{
@@ -189,10 +201,25 @@ BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char *
 		free(mp3Buffer);
 	}
 
+	CloseHandle(outFile);
+
+	printf("leftovers done %s\n", path);
+	FILE * file;
+	int fileOpen = fopen_s(&file, path, "r+");
+	if (fileOpen != 0)
+	{
+		fprintf_s(stderr, "ERROR WRITING XING VBR/INFO TAG\n");
+		return FALSE;
+	}
+	lame_mp3_tags_fid(lameFlags, file);
+	fclose(file);
+
+
 	free(path);
 	free(data);
+	lame_close(lameFlags);
 
-	return CloseHandle(outFile);
+	return TRUE;
 }
 
 // CDDriveExtractTrackToWAV
@@ -266,7 +293,7 @@ BOOL CDDriveExtractTrackToWAV(HANDLE cdDrive, CD_TRACK track, char * dir, char *
 		WriteFile(outFile, (LPCVOID)&data[0], SECTORS_PER_READ * BYTES_PER_SECTOR, &bytesWritten, NULL);
 	}
 
-	ULONG leftoverSectors = track.duration % SECTORS_PER_READ;
+	long leftoverSectors = track.duration % SECTORS_PER_READ;
 	if (leftoverSectors > 0)
 	{
 		readRequest.SectorCount = leftoverSectors;
