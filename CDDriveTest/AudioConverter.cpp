@@ -105,9 +105,9 @@ BOOL AudioConverterWAVToMP3(char * wavdir, char * wavfilename, BOOL del, char * 
 
 	// Encode file piece by piece
 	int totalSamples = songSize / (WAV_BITS_PER_SAMPLE / 8);
-	int mp3Buffsize = 1.25 * SAMPLES_PER_READ + 7200; // from LAME documentation
+	int mp3Buffsize = 1.25 * (SAMPLES_PER_READ * 2) + 7200; // from LAME documentation
 	unsigned char * mp3Buffer = (unsigned char *) calloc(mp3Buffsize, sizeof(unsigned char));
-	short * wavBuffer = (short *) calloc(SAMPLES_PER_READ, sizeof(short));
+	char * wavBuffer = (char *) calloc(SAMPLES_PER_READ * (WAV_BITS_PER_SAMPLE / 2), sizeof(char));
 	long i;
 	for (i = 0; i < (totalSamples / SAMPLES_PER_READ); i++)
 	{
@@ -118,7 +118,7 @@ BOOL AudioConverterWAVToMP3(char * wavdir, char * wavfilename, BOOL del, char * 
 			return FALSE;
 		}
 
-		int lameResult = lame_encode_buffer(lameFlags, wavBuffer, wavBuffer,
+		int lameResult = lame_encode_buffer(lameFlags, (short *) wavBuffer, (short *) wavBuffer,
 			SAMPLES_PER_READ, mp3Buffer, mp3Buffsize);
 		if (lameResult < 0)
 		{
@@ -170,7 +170,9 @@ BOOL AudioConverterWAVToMP3(char * wavdir, char * wavfilename, BOOL del, char * 
 		free(wavLeftoverBuffer);
 	}
 
+	printf("Finished extracting WAV data, tagging...\n"); // DEBUG
 
+	/*
 	// ID3v2.3.0 INFORMATION AT END OF FILE
 	// ID3v2.3.0 Header
 	char majorVersion = ID3_MAJOR_VERSION;
@@ -247,6 +249,7 @@ BOOL AudioConverterWAVToMP3(char * wavdir, char * wavfilename, BOOL del, char * 
 		AudioConverterWriteID3Frame(outFile, ID3_YEAR, yearField, FALSE);
 		free(yearField);
 	}
+	*/
 
 	free(path);
 	return CloseHandle(outFile); // Cannot create MP3 file as of right now

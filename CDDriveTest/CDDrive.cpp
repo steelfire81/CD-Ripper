@@ -61,6 +61,140 @@ BOOL CDDriveCloseTray(HANDLE cdDrive)
 	return result;
 }
 
+// CDDriveExtractTrackToMP3
+// Extracts a track from a CD drive and saves it as an MP3
+BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char * filename)
+{
+	char * path = getFilePath(dir, filename, EXT_MP3);
+	HANDLE outFile = CreateFile(cStringToLPCWSTR(path), GENERIC_WRITE, 0, NULL, CREATE_NEW,
+		FILE_ATTRIBUTE_NORMAL, NULL);
+	if (GetLastError() == ERROR_FILE_EXISTS)
+	{
+		fprintf_s(stderr, "ERROR: FILE EXISTS AT %s\n", path);
+		return FALSE;
+	}
+	if (outFile == INVALID_HANDLE_VALUE)
+	{
+		fprintf_s(stderr, "ERROR: FILE EXISTS AT %s\n", path);
+		return FALSE;
+	}
+
+	// Initialize LAME
+	lame_global_flags * lameFlags = lame_init();
+	if (lameFlags == NULL)
+	{
+		fprintf_s(stderr, "ERROR INITIALIZING LAME FLAGS\n");
+		return FALSE;
+	}
+	lame_set_num_channels(lameFlags, CD_NUM_CHANNELS);
+	lame_set_in_samplerate(lameFlags, CD_SAMPLE_RATE);
+	lame_set_brate(lameFlags, 320); // TODO: Let user set bitrate
+	lame_set_mode(lameFlags, JOINT_STEREO); // TODO: Let user set mode
+	lame_set_quality(lameFlags, LAME_QUALITY_HIGH); // TODO: Let user set quality
+	int result = lame_init_params(lameFlags);
+	if (result < 0)
+	{
+		fprintf_s(stderr, "ERROR INITIALIZING WITH LAME FLAGS\n");
+		return FALSE;
+	}
+
+	// Read from disk
+	short * data = (short *) calloc((SECTORS_PER_READ * BYTES_PER_SECTOR) / 2, sizeof(short));
+	DWORD bytesReturned = 0;
+	DWORD bytesWritten = 0;
+
+	RAW_READ_INFO readRequest;
+	readRequest.SectorCount = SECTORS_PER_READ;
+	readRequest.TrackMode = CDDA;
+
+	long i;
+	for (i = 0; i < (track.duration / SECTORS_PER_READ); i++)
+	{
+		readRequest.DiskOffset.QuadPart = (track.startAddress + (i * SECTORS_PER_READ)) * DISK_OFFSET_MULTIPLIER;
+		BOOL result = DeviceIoControl(cdDrive, IOCTL_CDROM_RAW_READ, &readRequest, sizeof(RAW_READ_INFO),
+			data, SECTORS_PER_READ * BYTES_PER_SECTOR, &bytesReturned, NULL);
+		if (!result)
+		{
+			fprintf_s(stderr, "ERROR READING DISK STARTING AROUND SECTOR %ld\n", i * SECTORS_PER_READ);
+			return FALSE;
+		}
+
+		int currShort = 0;
+		short * leftSamples = (short *) calloc(bytesReturned / 2, sizeof(short));
+		short * rightSamples = (short *) calloc(bytesReturned / 2, sizeof(short));
+		for (int s = 0; s < (bytesReturned / 2); s++)
+		{
+			leftSamples[s] = data[currShort];
+			currShort++;
+			rightSamples[s] = data[currShort];
+			currShort++;
+		}
+
+		int numSamples = ((SECTORS_PER_READ * BYTES_PER_SECTOR) / (CD_BITS_PER_SAMPLE / 8)) / 2;
+		int mp3Buffsize = 1.25 * numSamples + 7200; // from LAME documentation
+		unsigned char * mp3Buffer = (unsigned char *) calloc(mp3Buffsize, sizeof(unsigned char));
+
+		int lameBytes = lame_encode_buffer(lameFlags, (short *) leftSamples, (short *) rightSamples, numSamples,
+			mp3Buffer, mp3Buffsize);
+		if (lameBytes < 0)
+		{
+			fprintf_s(stderr, "ERROR CONVERTING CD DATA TO MP3 (%d)\n", lameBytes);
+			return FALSE;
+		}
+
+		result = WriteFile(outFile, (LPCVOID)&mp3Buffer[0], lameBytes, &bytesWritten, NULL);
+		if (!result)
+		{
+			fprintf_s(stderr, "ERROR WRITING BYTES STARTING AROUND SECTOR %ld\n", i * SECTORS_PER_READ);
+			return FALSE;
+		}
+
+		free(leftSamples);
+		free(rightSamples);
+		free(mp3Buffer);
+	}
+
+	long leftoverSectors = track.duration % SECTORS_PER_READ;
+	if (leftoverSectors > 0)
+	{
+		readRequest.SectorCount = leftoverSectors;
+		readRequest.DiskOffset.QuadPart = (track.startAddress + (i * SECTORS_PER_READ)) * DISK_OFFSET_MULTIPLIER;
+		BOOL result = DeviceIoControl(cdDrive, IOCTL_CDROM_RAW_READ, &readRequest, sizeof(RAW_READ_INFO),
+			data, leftoverSectors * BYTES_PER_SECTOR, &bytesReturned, NULL);
+		if (!result)
+		{
+			fprintf_s(stderr, "ERROR READING DISK LEFTOVERS STARTING AROUND SECTOR %ld\n", i * SECTORS_PER_READ);
+			return FALSE;
+		}
+
+		int numSamples = (leftoverSectors * BYTES_PER_SECTOR) / (CD_BITS_PER_SAMPLE / 8);
+		int mp3Buffsize = 1.25 * numSamples + 7200; // from LAME documentation
+		unsigned char * mp3Buffer = (unsigned char *)calloc(mp3Buffsize, sizeof(unsigned char));
+
+		int lameBytes = lame_encode_buffer(lameFlags, (short *)data, (short *)data, numSamples,
+			mp3Buffer, mp3Buffsize);
+		if (lameBytes < 0)
+		{
+			fprintf_s(stderr, "ERROR CONVERTING LEFTOVER CD DATA TO MP3 (%d)\n", lameBytes);
+			return FALSE;
+		}
+
+		result = WriteFile(outFile, (LPCVOID)&mp3Buffer[0], lameBytes, &bytesWritten, NULL);
+		if (!result)
+		{
+			fprintf_s(stderr, "ERROR WRITING LEFTOVER BYTES STARTING AROUND SECTOR %ld\n", i * SECTORS_PER_READ);
+			return FALSE;
+		}
+
+		free(mp3Buffer);
+	}
+
+	free(path);
+	free(data);
+
+	return CloseHandle(outFile);
+}
+
 // CDDriveExtractTrackToWAV
 // Extracts a track from a CD drive and saves it as a WAV
 BOOL CDDriveExtractTrackToWAV(HANDLE cdDrive, CD_TRACK track, char * dir, char * filename)

@@ -7,6 +7,9 @@
 
 // Constants
 #define BYTES_PER_SECTOR 2352
+#define CD_BITS_PER_SAMPLE 16
+#define CD_NUM_CHANNELS 2
+#define CD_SAMPLE_RATE 44100
 #define DISK_OFFSET_MULTIPLIER 2048
 #define DRIVE_FIRST 'A'
 #define DRIVE_HANDLE_PREFIX "\\\\.\\"
@@ -40,6 +43,7 @@ HANDLE * CDDriveGetHandles();
 // Individual Drive Functions
 BOOL CDDriveCheckTray(HANDLE cdDrive);
 BOOL CDDriveCloseTray(HANDLE cdDrive);
+BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char * filename);
 BOOL CDDriveExtractTrackToWAV(HANDLE cdDrive, CD_TRACK track, char * dir, char * filename);
 BOOL CDDriveOpenTray(HANDLE cdDrive);
 unsigned char * CDDriveReadRawTrack(HANDLE cdDrive, CD_TRACK track);

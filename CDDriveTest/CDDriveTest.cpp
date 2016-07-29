@@ -29,25 +29,11 @@ int main()
 		
 		char * filename = (char *) calloc(strlen("Track") + STRLEN_INT(i + 1) + 1, sizeof(char));
 		sprintf_s(filename, sizeof(char) * (strlen("Track") + STRLEN_INT(i + 1) + 1), "%s%d", "Track", i + 1);
-		BOOL result = CDDriveExtractTrackToWAV(cdDriveHandles[selectedDrive], tracks[i], ".", filename);
+		BOOL result = CDDriveExtractTrackToMP3(cdDriveHandles[selectedDrive], tracks[i], ".", filename);
 		if (result)
-			printf("\tExtracted track to WAV\n");
+			printf("\tExtracted track to MP3\n");
 		else
 			printf("\tCould not extract track %d\n", i + 1);
-
-		printf("\tConverting to MP3\n");
-
-		MP3_TAGS myTags;
-		myTags.diskNumber = 1;
-		myTags.trackNumber = 1;
-		myTags.year = 1995;
-
-		result = AudioConverterWAVToMP3(".", filename, FALSE, ".", filename, myTags, 320, JOINT_STEREO,
-			LAME_QUALITY_HIGH);
-		if (result)
-			printf("\tConverted track to MP3\n");
-		else
-			printf("\tCould not convert %d\n", i + 1);
 
 		free(filename);
 	}
