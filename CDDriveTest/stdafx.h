@@ -17,6 +17,7 @@
 #include "../include/lame.h"
 #include "AudioConverter.h"
 #include "CDDrive.h"
+#include "ID3Tagger.h"
 
 // Macro Functions
 #define STRLEN_INT(x) (x == 0 ? 1 : ((int) (log10(x) + 1)))

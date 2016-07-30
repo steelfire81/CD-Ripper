@@ -223,12 +223,7 @@ BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char *
 	}
 	else
 	{
-		DWORD movePointerResult = SetFilePointer(outFile, 0, NULL, FILE_BEGIN);
-		if (movePointerResult == INVALID_SET_FILE_POINTER)
-		{
-			fprintf_s(stderr, "whoops\n");
-			return FALSE;
-		}
+		SetFilePointer(outFile, 0, NULL, FILE_BEGIN);
 
 		result = WriteFile(outFile, (LPCVOID)&firstFrameBuffer[0], firstFrameBytes, &bytesWritten, NULL);
 		if (!result)
