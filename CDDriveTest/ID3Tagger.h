@@ -25,6 +25,10 @@
 #define ID3_TRACK_NUMBER "TRCK"
 #define ID3_YEAR "TYER"
 
+// Constants - ID3 Text Encoding
+#define ID3_TEXT_ISO 0
+#define ID3_TEXT_UNICODE 1
+
 // Structs
 typedef struct MP3_TAGS {
 	char * artist;
@@ -33,4 +37,4 @@ typedef struct MP3_TAGS {
 
 // Functions
 int ID3TagFile(HANDLE file, MP3_TAGS tags);
-int ID3WriteFrame(HANDLE file, char * frameID, char * data, BOOL readonly);
+int ID3WriteTextFrame(HANDLE file, char * frameID, char * data, BOOL readonly);

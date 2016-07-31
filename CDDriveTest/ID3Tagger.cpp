@@ -11,9 +11,9 @@ int ID3TagFile(HANDLE file, MP3_TAGS tags)
 	// Calculate complete size of tag
 	long sizeMinusHeader = 0;
 	if (tags.artist != NULL)
-		sizeMinusHeader += 10 + strlen(tags.artist);
+		sizeMinusHeader += 10 + strlen(tags.artist) + 1;
 	if (tags.title != NULL)
-		sizeMinusHeader += 10 + strlen(tags.title);
+		sizeMinusHeader += 10 + strlen(tags.title) + 1;
 	sizeMinusHeader = reverseLongBytewiseEndian(sizeMinusHeader);
 
 	// Header
@@ -29,29 +29,29 @@ int ID3TagFile(HANDLE file, MP3_TAGS tags)
 	WriteFile(file, &flags, 1, &bytesWritten, NULL);
 	totalBytes += bytesWritten;
 	WriteFile(file, &sizeMinusHeader, 4, &bytesWritten, NULL);
-	printf("%ld\n", sizeMinusHeader); // DEBUG
 	totalBytes += bytesWritten;
 
 	// Frames (One for each tag provided)
 	if (tags.artist != NULL)
-		totalBytes += ID3WriteFrame(file, ID3_ARTIST, tags.artist, FALSE);
+		totalBytes += ID3WriteTextFrame(file, ID3_ARTIST, tags.artist, FALSE);
 	if (tags.title != NULL)
-		totalBytes += ID3WriteFrame(file, ID3_TITLE, tags.title, FALSE);
+		totalBytes += ID3WriteTextFrame(file, ID3_TITLE, tags.title, FALSE);
 
 	return totalBytes;
 }
 
 // ID3WriteFrame
 // Write a frame to an MP3 file containing a tag, returning number of bytes written
-int ID3WriteFrame(HANDLE file, char * frameID, char * data, BOOL readonly)
+int ID3WriteTextFrame(HANDLE file, char * frameID, char * data, BOOL readonly)
 {
 	int totalBytes = 0;
 	DWORD bytesWritten = 0;
 	
-	long size = strlen(data);
+	long size = strlen(data) + 1;
 	size = reverseLongBytewiseEndian(size);
 	unsigned char flag1 = ID3_FRAME_FLAGS_1;
 	unsigned char flag2 = ID3_FRAME_FLAGS_2;
+	char encoding = ID3_TEXT_ISO; // TODO: Offer Unicode
 
 	WriteFile(file, frameID, 4, &bytesWritten, NULL);
 	totalBytes += bytesWritten;
@@ -60,6 +60,8 @@ int ID3WriteFrame(HANDLE file, char * frameID, char * data, BOOL readonly)
 	WriteFile(file, &flag1, 1, &bytesWritten, NULL);
 	totalBytes += bytesWritten;
 	WriteFile(file, &flag2, 1, &bytesWritten, NULL);
+	totalBytes += bytesWritten;
+	WriteFile(file, &encoding, 1, &bytesWritten, NULL);
 	totalBytes += bytesWritten;
 	WriteFile(file, data, strlen(data), &bytesWritten, NULL);
 	totalBytes += bytesWritten;
