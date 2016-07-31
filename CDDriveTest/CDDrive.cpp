@@ -99,6 +99,12 @@ BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char *
 		return FALSE;
 	}
 
+	// Write ID3 tags
+	MP3_TAGS testTags;
+	testTags.artist = "Smashing Pumpkins";
+	testTags.title = "Cherub Rock";
+	int tagSize = ID3TagFile(outFile, testTags);
+
 	// Read from disk
 	short * data = (short *) calloc((SECTORS_PER_READ * BYTES_PER_SECTOR) / 2, sizeof(short));
 	DWORD bytesReturned = 0;
@@ -223,7 +229,7 @@ BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char *
 	}
 	else
 	{
-		SetFilePointer(outFile, 0, NULL, FILE_BEGIN);
+		SetFilePointer(outFile, tagSize, NULL, FILE_BEGIN);
 
 		result = WriteFile(outFile, (LPCVOID)&firstFrameBuffer[0], firstFrameBytes, &bytesWritten, NULL);
 		if (!result)
@@ -233,13 +239,11 @@ BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char *
 		}
 	}
 
-	CloseHandle(outFile);
-
 	free(path);
 	free(data);
 	lame_close(lameFlags);
 
-	return TRUE;
+	return CloseHandle(outFile);
 }
 
 // CDDriveExtractTrackToWAV

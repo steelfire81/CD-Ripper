@@ -3,6 +3,7 @@
 #include "stdafx.h"
 
 // Constants - Extensions
+#define EXT_MP3 ".mp3"
 #define EXT_WAV ".wav"
 
 // Constants
@@ -19,7 +20,14 @@
 #define FRAMES_PER_SECOND 75
 #define LAME_LEFTOVER_BUFFSIZE 7200
 #define LAME_VBR_FRAME_BUFFSIZE 7200
+#define SAMPLES_PER_READ 20
 #define SECTORS_PER_READ 10
+
+// Constants - LAME
+#define LAME_QUALITY_HIGH 2
+#define LAME_QUALITY_DEFAULT 3
+#define LAME_QUALITY_NORMAL 5
+#define LAME_QUALITY_LOW 7
 
 // Constants - WAV Header
 #define WAV_BITS_PER_SAMPLE 16

@@ -23,3 +23,18 @@ char * getFilePath(char * dir, char * filename, char * ext)
 		dir, filename, ext);
 	return path;
 }
+
+// reverseLongBytewiseEndian
+// Reverses the order of bytes in a long
+long reverseLongBytewiseEndian(long l)
+{
+	long result = 0;
+
+	char * originalPointer = (char *) &l;
+	char * resultPointer = (char *) &result;
+
+	for (int i = 0; i < 4; i++)
+		resultPointer[i] = originalPointer[3 - i];
+
+	return result;
+}

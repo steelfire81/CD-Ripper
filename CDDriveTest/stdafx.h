@@ -15,7 +15,6 @@
 #include <Ntddcdrm.h>
 #include <math.h>
 #include "../include/lame.h"
-#include "AudioConverter.h"
 #include "CDDrive.h"
 #include "ID3Tagger.h"
 
@@ -25,3 +24,4 @@
 // Method declarations
 LPCWSTR cStringToLPCWSTR(const char * cString);
 char * getFilePath(char * dir, char * filename, char * ext);
+long reverseLongBytewiseEndian(long l);

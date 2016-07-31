@@ -8,6 +8,14 @@ int ID3TagFile(HANDLE file, MP3_TAGS tags)
 	int totalBytes = 0;
 	DWORD bytesWritten = 0;
 
+	// Calculate complete size of tag
+	long sizeMinusHeader = 0;
+	if (tags.artist != NULL)
+		sizeMinusHeader += 10 + strlen(tags.artist);
+	if (tags.title != NULL)
+		sizeMinusHeader += 10 + strlen(tags.title);
+	sizeMinusHeader = reverseLongBytewiseEndian(sizeMinusHeader);
+
 	// Header
 	char majorVersion = ID3_MAJOR_VERSION;
 	char minorVersion = ID3_MINOR_VERSION;
@@ -19,6 +27,9 @@ int ID3TagFile(HANDLE file, MP3_TAGS tags)
 	WriteFile(file, &minorVersion, 1, &bytesWritten, NULL);
 	totalBytes += bytesWritten;
 	WriteFile(file, &flags, 1, &bytesWritten, NULL);
+	totalBytes += bytesWritten;
+	WriteFile(file, &sizeMinusHeader, 4, &bytesWritten, NULL);
+	printf("%ld\n", sizeMinusHeader); // DEBUG
 	totalBytes += bytesWritten;
 
 	// Frames (One for each tag provided)
@@ -37,12 +48,9 @@ int ID3WriteFrame(HANDLE file, char * frameID, char * data, BOOL readonly)
 	int totalBytes = 0;
 	DWORD bytesWritten = 0;
 	
-	ULONG size = strlen(data);
-	unsigned char flag1;
-	if (readonly)
-		flag1 = ID3_FRAME_FLAGS_1_READONLY;
-	else
-		flag1 = ID3_FRAME_FLAGS_1;
+	long size = strlen(data);
+	size = reverseLongBytewiseEndian(size);
+	unsigned char flag1 = ID3_FRAME_FLAGS_1;
 	unsigned char flag2 = ID3_FRAME_FLAGS_2;
 
 	WriteFile(file, frameID, 4, &bytesWritten, NULL);
@@ -53,7 +61,7 @@ int ID3WriteFrame(HANDLE file, char * frameID, char * data, BOOL readonly)
 	totalBytes += bytesWritten;
 	WriteFile(file, &flag2, 1, &bytesWritten, NULL);
 	totalBytes += bytesWritten;
-	WriteFile(file, &data, strlen(data), &bytesWritten, NULL);
+	WriteFile(file, data, strlen(data), &bytesWritten, NULL);
 	totalBytes += bytesWritten;
 
 	return totalBytes;
