@@ -33,6 +33,8 @@
 typedef struct MP3_TAGS {
 	char * artist;
 	char * title;
+	char * album;
+	char * genre;
 } MP3_TAGS;
 
 // Functions

@@ -14,6 +14,10 @@ int ID3TagFile(HANDLE file, MP3_TAGS tags)
 		sizeMinusHeader += 10 + strlen(tags.artist) + 1;
 	if (tags.title != NULL)
 		sizeMinusHeader += 10 + strlen(tags.title) + 1;
+	if (tags.album != NULL)
+		sizeMinusHeader += 10 + strlen(tags.album) + 1;
+	if (tags.genre != NULL)
+		sizeMinusHeader += 10 + strlen(tags.genre) + 1;
 	sizeMinusHeader = reverseLongBytewiseEndian(sizeMinusHeader);
 
 	// Header
@@ -36,6 +40,10 @@ int ID3TagFile(HANDLE file, MP3_TAGS tags)
 		totalBytes += ID3WriteTextFrame(file, ID3_ARTIST, tags.artist, FALSE);
 	if (tags.title != NULL)
 		totalBytes += ID3WriteTextFrame(file, ID3_TITLE, tags.title, FALSE);
+	if (tags.album != NULL)
+		totalBytes += ID3WriteTextFrame(file, ID3_ALBUM, tags.album, FALSE);
+	if (tags.genre != NULL)
+		totalBytes += ID3WriteTextFrame(file, ID3_GENRE, tags.genre, FALSE);
 
 	return totalBytes;
 }
