@@ -46,3 +46,12 @@ class ID3Frame
 		char * getData();
 		long getTotalFrameSize();
 };
+
+// Structs
+typedef struct ID3_FRAME_NODE {
+	ID3Frame frame;
+	ID3_FRAME_NODE * next;
+} ID3_FRAME_NODE;
+
+// Other Methods
+ID3_FRAME_NODE * generateID3FrameNode(ID3Frame frame);

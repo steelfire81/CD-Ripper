@@ -2,12 +2,6 @@
 
 #include "stdafx.h"
 
-// Structs
-typedef struct ID3_FRAME_NODE {
-	ID3Frame frame;
-	ID3_FRAME_NODE * next;
-} ID3_FRAME_NODE;
-
 // MP3Tags Class
 // Class for formatting and storing MP3 tag data
 class MP3Tags

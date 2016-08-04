@@ -30,6 +30,3 @@ class ID3Block
 		long getTotalSize();
 		ID3_FRAME_NODE * getFrameListHead();
 };
-
-// Other Methods
-ID3_FRAME_NODE * generateID3FrameNode(ID3Frame frame);

@@ -73,13 +73,3 @@ ID3_FRAME_NODE * ID3Block::getFrameListHead()
 {
 	return frameList;
 }
-
-//*** OTHER METHODS ***//
-// generateID3FrameNode
-// Create an ID3FrameNode from an ID3Frame
-ID3_FRAME_NODE * generateID3FrameNode(ID3Frame frame)
-{
-	ID3_FRAME_NODE * node = (ID3_FRAME_NODE *) malloc(sizeof(ID3_FRAME_NODE));
-	node->frame = frame;
-	return node;
-}

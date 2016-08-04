@@ -16,8 +16,8 @@
 #include <math.h>
 #include "../include/lame.h"
 #include "ID3Frame.h"
-#include "MP3Tags.h"
 #include "ID3Block.h"
+#include "MP3Tags.h"
 #include "CDDrive.h"
 
 // Macro Functions
