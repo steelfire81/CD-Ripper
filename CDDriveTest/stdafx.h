@@ -15,9 +15,10 @@
 #include <Ntddcdrm.h>
 #include <math.h>
 #include "../include/lame.h"
-#include "CDDrive.h"
-#include "ID3Tagger.h"
+#include "ID3Frame.h"
 #include "MP3Tags.h"
+#include "ID3Block.h"
+#include "CDDrive.h"
 
 // Macro Functions
 #define STRLEN_INT(x) (x == 0 ? 1 : ((int) (log10(x) + 1)))
