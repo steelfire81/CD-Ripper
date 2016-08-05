@@ -10,19 +10,13 @@ ID3Block::ID3Block(ID3_FRAME_NODE * frames)
 	flags = ID3_FLAGS;
 	frameList = frames;
 
-	printf("block header done\n"); // DEBUG
-
 	size = ID3_HEADER_LENGTH;
 	ID3_FRAME_NODE * curr = frameList;
-	printf("rotating\n"); // DEBUG
 	while (curr != NULL)
 	{
-		size += curr->frame.getTotalFrameSize();
-		printf("%ld\n", size); // DEBUG
+		size += curr->frame->getTotalFrameSize();
 		curr = curr->next;
 	}
-
-	printf("block made\n"); // DEBUG
 }
 
 // getIdentifier

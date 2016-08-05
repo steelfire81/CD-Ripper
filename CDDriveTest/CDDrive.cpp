@@ -100,43 +100,38 @@ BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char *
 	}
 
 	// Write ID3 header
-	printf("writing header\n"); // DEBUG
 	DWORD bytesWritten = 0;
-	ID3Block id3Block = ID3Block::ID3Block(tags.convertToID3FrameList());
-	long tagSize = id3Block.getTotalSize();
-	char majorVersion = id3Block.getMajorVersion();
-	char minorVersion = id3Block.getMinorVersion();
-	unsigned char flags = id3Block.getFlags();
-	long formattedSize = id3Block.getFormattedSize();
-	printf("%ld %c %c %u %ld\n", tagSize, majorVersion, minorVersion, flags, formattedSize); // DEBUG
-	WriteFile(outFile, id3Block.getIdentifier(), 3, &bytesWritten, NULL);
+	ID3Block * id3Block = new ID3Block(tags.convertToID3FrameList());
+	long tagSize = id3Block->getTotalSize();
+	char majorVersion = id3Block->getMajorVersion();
+	char minorVersion = id3Block->getMinorVersion();
+	unsigned char flags = id3Block->getFlags();
+	long formattedSize = id3Block->getFormattedSize();
+	WriteFile(outFile, id3Block->getIdentifier(), 3, &bytesWritten, NULL);
 	WriteFile(outFile, &majorVersion, 1, &bytesWritten, NULL);
 	WriteFile(outFile, &minorVersion, 1, &bytesWritten, NULL);
 	WriteFile(outFile, &flags, 1, &bytesWritten, NULL);
 	WriteFile(outFile, &formattedSize, 4, &bytesWritten, NULL);
 
 	// Write ID3 frames
-	printf("writing frames\n"); // DEBUG
-	ID3_FRAME_NODE * curr = id3Block.getFrameListHead();
+	ID3_FRAME_NODE * curr = id3Block->getFrameListHead();
 	while (curr != NULL)
 	{
-		ID3Frame frame = curr->frame;
+		ID3Frame * frame = curr->frame;
 
-		long formattedFrameSize = frame.getFormattedSize();
-		unsigned char flag1 = frame.getFlag1();
-		unsigned char flag2 = frame.getFlag2();
-		unsigned char encoding = frame.getEncoding();
-		WriteFile(outFile, frame.getFrameID(), 4, &bytesWritten, NULL);
+		long formattedFrameSize = frame->getFormattedSize();
+		unsigned char flag1 = frame->getFlag1();
+		unsigned char flag2 = frame->getFlag2();
+		unsigned char encoding = frame->getEncoding();
+		WriteFile(outFile, frame->getFrameID(), 4, &bytesWritten, NULL);
 		WriteFile(outFile, &formattedFrameSize, 4, &bytesWritten, NULL);
 		WriteFile(outFile, &flag1, 1, &bytesWritten, NULL);
 		WriteFile(outFile, &flag2, 1, &bytesWritten, NULL);
 		WriteFile(outFile, &encoding, 1, &bytesWritten, NULL);
-		WriteFile(outFile, frame.getData(), strlen(frame.getData()), &bytesWritten, NULL);
+		WriteFile(outFile, frame->getData(), strlen(frame->getData()), &bytesWritten, NULL);
 
 		curr = curr->next;
 	}
-
-	printf("done writing frames\n"); // DEBUG
 
 	// Read from disk
 	DWORD bytesReturned = 0;

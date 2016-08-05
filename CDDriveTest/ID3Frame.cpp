@@ -9,7 +9,6 @@ ID3Frame::ID3Frame(char * id, unsigned char e, char * d)
 	data = d;
 
 	size = strlen(d) + 1;
-	printf("%ld\n", size); // DEBUG
 	flag1 = ID3_FRAME_FLAGS_1;
 	flag2 = ID3_FRAME_FLAGS_2;
 }
@@ -66,9 +65,10 @@ long ID3Frame::getTotalFrameSize()
 //*** OTHER METHODS ***//
 // generateID3FrameNode
 // Create an ID3FrameNode from an ID3Frame
-ID3_FRAME_NODE * generateID3FrameNode(ID3Frame frame)
+ID3_FRAME_NODE * generateID3FrameNode(ID3Frame * frame)
 {
-	ID3_FRAME_NODE * node = (ID3_FRAME_NODE *)malloc(sizeof(ID3_FRAME_NODE));
+	ID3_FRAME_NODE * node = (ID3_FRAME_NODE *) malloc(sizeof(ID3_FRAME_NODE));
 	node->frame = frame;
+	node->next = NULL;
 	return node;
 }

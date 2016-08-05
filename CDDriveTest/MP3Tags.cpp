@@ -143,22 +143,22 @@ void MP3Tags::setYear(int y)
 // Converts these MP3 tags to a list of ID3 tags for writing
 ID3_FRAME_NODE * MP3Tags::convertToID3FrameList()
 {
-	ID3_FRAME_NODE * list = (ID3_FRAME_NODE *) malloc(sizeof(ID3_FRAME_NODE));
-	ID3_FRAME_NODE * curr = list;
+	ID3_FRAME_NODE * head = (ID3_FRAME_NODE *) malloc(sizeof(ID3_FRAME_NODE));
+	ID3_FRAME_NODE * curr = head;
 
 	if (album != NULL)
 	{
-		curr = generateID3FrameNode(ID3Frame::ID3Frame(ID3_FRAME_ALBUM, ID3_ENCODING_ISO, album));
+		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_ALBUM, ID3_ENCODING_ISO, album));
 		curr = curr->next;
 	}
 	if (albumArtist != NULL)
 	{
-		curr = generateID3FrameNode(ID3Frame::ID3Frame(ID3_FRAME_ALBUM_ARTIST, ID3_ENCODING_ISO, albumArtist));
+		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_ALBUM_ARTIST, ID3_ENCODING_ISO, albumArtist));
 		curr = curr->next;
 	}
 	if (artist != NULL)
 	{
-		curr = generateID3FrameNode(ID3Frame::ID3Frame(ID3_FRAME_ARTIST, ID3_ENCODING_ISO, artist));
+		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_ARTIST, ID3_ENCODING_ISO, artist));
 		curr = curr->next;
 	}
 	if (comment != NULL)
@@ -168,46 +168,47 @@ ID3_FRAME_NODE * MP3Tags::convertToID3FrameList()
 	}
 	if (compilation != NULL)
 	{
-		curr = generateID3FrameNode(ID3Frame::ID3Frame(ID3_FRAME_COMPILATION, ID3_ENCODING_ISO, compilation));
+		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_COMPILATION, ID3_ENCODING_ISO, compilation));
 		curr = curr->next;
 	}
 	if (composer != NULL)
 	{
-		curr = generateID3FrameNode(ID3Frame::ID3Frame(ID3_FRAME_COMPOSER, ID3_ENCODING_ISO, composer));
+		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_COMPOSER, ID3_ENCODING_ISO, composer));
 		curr = curr->next;
 	}
 	if (disk != NULL)
 	{
-		curr = generateID3FrameNode(ID3Frame::ID3Frame(ID3_FRAME_DISK_NUMBER, ID3_ENCODING_ISO, disk));
+		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_DISK_NUMBER, ID3_ENCODING_ISO, disk));
 		curr = curr->next;
 	}
 	if (encoder != NULL)
 	{
-		curr = generateID3FrameNode(ID3Frame::ID3Frame(ID3_FRAME_ENCODED_BY, ID3_ENCODING_ISO, encoder));
+		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_ENCODED_BY, ID3_ENCODING_ISO, encoder));
 		curr = curr->next;
 	}
 	if (genre != NULL)
 	{
-		curr = generateID3FrameNode(ID3Frame::ID3Frame(ID3_FRAME_GENRE, ID3_ENCODING_ISO, genre));
+		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_GENRE, ID3_ENCODING_ISO, genre));
 		curr = curr->next;
 	}
 	if (title != NULL)
 	{
-		curr = generateID3FrameNode(ID3Frame::ID3Frame(ID3_FRAME_TITLE, ID3_ENCODING_ISO, title));
+		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_TITLE, ID3_ENCODING_ISO, title));
 		curr = curr->next;
 	}
 	if (track != NULL)
 	{
-		curr = generateID3FrameNode(ID3Frame::ID3Frame(ID3_FRAME_TRACK_NUMBER, ID3_ENCODING_ISO, track));
+		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_TRACK_NUMBER, ID3_ENCODING_ISO, track));
 		curr = curr->next;
 	}
 	if (year != NULL)
 	{
-		curr = generateID3FrameNode(ID3Frame::ID3Frame(ID3_FRAME_YEAR, ID3_ENCODING_ISO, year));
+		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_YEAR, ID3_ENCODING_ISO, year));
 		curr = curr->next;
 	}
 
-	printf("converted\n"); // DEBUG
+	ID3_FRAME_NODE * realHead = head->next;
+	free(head);
 
-	return list;
+	return realHead;
 }
