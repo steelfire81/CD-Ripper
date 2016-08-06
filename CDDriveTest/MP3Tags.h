@@ -20,7 +20,6 @@ class MP3Tags
 		char * track;
 		char * year;
 	public:
-		MP3Tags();
 		void setAlbum(char * a);
 		void setAlbumArtist(char * aa);
 		void setArtist(char * a);

@@ -1,23 +1,5 @@
 #include "stdafx.h"
 
-// Constructor
-// Create a set of MP3Tags
-MP3Tags::MP3Tags()
-{
-	album = NULL;
-	albumArtist = NULL;
-	artist = NULL;
-	comment = NULL;
-	compilation = NULL;
-	composer = NULL;
-	disk = NULL;
-	encoder = NULL;
-	genre = NULL;
-	title = NULL;
-	track = NULL;
-	year = NULL;
-}
-
 // setAlbum
 // Set the album title
 void MP3Tags::setAlbum(char * a)
