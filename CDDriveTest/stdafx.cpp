@@ -38,3 +38,30 @@ long reverseLongBytewiseEndian(long l)
 
 	return result;
 }
+
+// longToSynchsafe
+// Convert a long to a synchsafe long
+long longToSynchsafe(long l)
+{
+	long result = 0;
+	long mask = SYNCHSAFE_MASK;
+
+	for (int i = 0; i < 4; i++)
+	{
+		result = l & ~mask;
+		result <<= 1;
+		result |= l & mask;
+
+		mask = ((mask + 1) << 8) - 1;
+		l = result;
+	}
+
+	return result;
+}
+
+// formatLongForID3Tag
+// Convert a long for ID3 tagging by reversing endian and then making synchsafe
+long formatLongForID3Tag(long l)
+{
+	return reverseLongBytewiseEndian(longToSynchsafe(l));
+}

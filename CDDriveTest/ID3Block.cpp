@@ -51,7 +51,7 @@ unsigned char ID3Block::getFlags()
 // Return the size of the block in reverse endian for writing
 long ID3Block::getFormattedSize()
 {
-	return reverseLongBytewiseEndian(size - ID3_HEADER_LENGTH);
+	return formatLongForID3Tag(size - ID3_HEADER_LENGTH);
 }
 
 // getTotalSize

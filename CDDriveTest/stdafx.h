@@ -20,6 +20,9 @@
 #include "MP3Tags.h"
 #include "CDDrive.h"
 
+// Constants
+#define SYNCHSAFE_MASK 127 // 01111111
+
 // Macro Functions
 #define STRLEN_INT(x) (x == 0 ? 1 : ((int) (log10(x) + 1)))
 
@@ -27,3 +30,5 @@
 LPCWSTR cStringToLPCWSTR(const char * cString);
 char * getFilePath(char * dir, char * filename, char * ext);
 long reverseLongBytewiseEndian(long l);
+long longToSynchsafe(long l);
+long formatLongForID3Tag(long l);

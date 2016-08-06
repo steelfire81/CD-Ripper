@@ -24,7 +24,7 @@ char * ID3Frame::getFrameID()
 // Return this frame's size in reverse endian
 long ID3Frame::getFormattedSize()
 {
-	return reverseLongBytewiseEndian(size);
+	return formatLongForID3Tag(size);
 }
 
 // getFlag1
