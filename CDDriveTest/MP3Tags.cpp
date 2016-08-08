@@ -7,6 +7,13 @@ void MP3Tags::setAlbum(char * a)
 	album = a;
 }
 
+// setAlbumSort
+// Set the sort album
+void MP3Tags::setAlbumSort(char * as)
+{
+	albumSort = as;
+}
+
 // setAlbumArtist
 // Set the album artist
 void MP3Tags::setAlbumArtist(char * aa)
@@ -14,11 +21,33 @@ void MP3Tags::setAlbumArtist(char * aa)
 	albumArtist = aa;
 }
 
+// setAlbumArtistSort
+// Set the sort album artist
+void MP3Tags::setAlbumArtistSort(char * aas)
+{
+	albumArtistSort = aas;
+}
+
 // setArtist
 // Set the artist
 void MP3Tags::setArtist(char * a)
 {
 	artist = a;
+}
+
+// setArtistSort
+// Set the sort artist
+void MP3Tags::setArtistSort(char * as)
+{
+	artistSort = as;
+}
+
+// setBPM
+// Set the BPM
+void MP3Tags::setBPM(int b)
+{
+	bpm = (char *) calloc(STRLEN_INT(b) + 1, sizeof(char));
+	sprintf_s(bpm, sizeof(char) * (STRLEN_INT(b) + 1), "%d", b);
 }
 
 // setComment
@@ -41,6 +70,13 @@ void MP3Tags::setCompilation(BOOL c)
 void MP3Tags::setComposer(char * c)
 {
 	composer = c;
+}
+
+// setComposerSort
+// Set the sort composer
+void MP3Tags::setComposerSort(char * cs)
+{
+	composerSort = cs;
 }
 
 // setDisk
@@ -66,13 +102,6 @@ void MP3Tags::setDisk(int d, int dTotal)
 	}
 }
 
-// setEncoder
-// Set the encoder
-void MP3Tags::setEncoder(char * e)
-{
-	encoder = e;
-}
-
 // setGenre
 // Set the genre
 void MP3Tags::setGenre(char * g)
@@ -85,6 +114,13 @@ void MP3Tags::setGenre(char * g)
 void MP3Tags::setTitle(char * t)
 {
 	title = t;
+}
+
+// setTitleSort
+// Set the sort title
+void MP3Tags::setTitleSort(char * ts)
+{
+	titleSort = ts;
 }
 
 // setTrack
@@ -133,14 +169,34 @@ ID3_FRAME_NODE * MP3Tags::convertToID3FrameList()
 		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_ALBUM, ID3_ENCODING_ISO, album));
 		curr = curr->next;
 	}
+	if (albumSort != NULL)
+	{
+		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_ALBUM_SORT, ID3_ENCODING_ISO, albumSort));
+		curr = curr->next;
+	}
 	if (albumArtist != NULL)
 	{
 		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_ALBUM_ARTIST, ID3_ENCODING_ISO, albumArtist));
 		curr = curr->next;
 	}
+	if (albumArtistSort != NULL)
+	{
+		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_ALBUM_ARTIST_SORT, ID3_ENCODING_ISO, albumArtistSort));
+		curr = curr->next;
+	}
 	if (artist != NULL)
 	{
 		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_ARTIST, ID3_ENCODING_ISO, artist));
+		curr = curr->next;
+	}
+	if (artistSort != NULL)
+	{
+		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_ARTIST_SORT, ID3_ENCODING_ISO, artistSort));
+		curr = curr->next;
+	}
+	if (bpm != NULL)
+	{
+		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_BPM, ID3_ENCODING_ISO, bpm));
 		curr = curr->next;
 	}
 	if (comment != NULL)
@@ -158,14 +214,14 @@ ID3_FRAME_NODE * MP3Tags::convertToID3FrameList()
 		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_COMPOSER, ID3_ENCODING_ISO, composer));
 		curr = curr->next;
 	}
+	if (composerSort != NULL)
+	{
+		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_COMPOSER_SORT, ID3_ENCODING_ISO, composerSort));
+		curr = curr->next;
+	}
 	if (disk != NULL)
 	{
 		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_DISK_NUMBER, ID3_ENCODING_ISO, disk));
-		curr = curr->next;
-	}
-	if (encoder != NULL)
-	{
-		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_ENCODED_BY, ID3_ENCODING_ISO, encoder));
 		curr = curr->next;
 	}
 	if (genre != NULL)
@@ -176,6 +232,11 @@ ID3_FRAME_NODE * MP3Tags::convertToID3FrameList()
 	if (title != NULL)
 	{
 		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_TITLE, ID3_ENCODING_ISO, title));
+		curr = curr->next;
+	}
+	if (titleSort != NULL)
+	{
+		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_TITLE_SORT, ID3_ENCODING_ISO, titleSort));
 		curr = curr->next;
 	}
 	if (track != NULL)

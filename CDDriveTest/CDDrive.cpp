@@ -63,7 +63,7 @@ BOOL CDDriveCloseTray(HANDLE cdDrive)
 
 // CDDriveExtractTrackToMP3
 // Extracts a track from a CD drive and saves it as an MP3
-BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char * filename, MP3Tags tags)
+BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char * filename, MP3Tags * tags)
 {
 	char * path = getFilePath(dir, filename, EXT_MP3);
 	HANDLE outFile = CreateFile(cStringToLPCWSTR(path), GENERIC_WRITE, 0, NULL, CREATE_NEW,
@@ -101,7 +101,7 @@ BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char *
 
 	// Write ID3 header
 	DWORD bytesWritten = 0;
-	ID3Block * id3Block = new ID3Block(tags.convertToID3FrameList());
+	ID3Block * id3Block = new ID3Block(tags->convertToID3FrameList());
 	long tagSize = id3Block->getTotalSize();
 	char majorVersion = id3Block->getMajorVersion();
 	char minorVersion = id3Block->getMinorVersion();

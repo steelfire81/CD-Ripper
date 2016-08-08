@@ -27,18 +27,24 @@ int main()
 		printf("\tStart: %ld frames\n", tracks[i].startAddress);
 		printf("\tDuration: %ld frames\n", tracks[i].duration);
 		
-		MP3Tags tags = MP3Tags::MP3Tags();
-		tags.setAlbum("Cherub Rock");
-		tags.setAlbumArtist("Smashing Pumpkins");
-		tags.setArtist("Smashing Pumpkins");
-		tags.setCompilation(FALSE);
-		tags.setComposer("Billy Corgan");
-		tags.setDisk(1, 1);
-		tags.setEncoder("LAME3.99.5");
-		tags.setGenre("Alternative Rock");
-		tags.setTitle("Cherub Rock");
-		tags.setTrack(i + 1, numTracks);
-		tags.setYear(1993);
+		MP3Tags * tags = new MP3Tags();
+		tags->setAlbum("Album");
+		tags->setAlbumArtist("AlbumArtist");
+		tags->setArtist("Artist");
+		tags->setCompilation(TRUE);
+		tags->setComposer("Composer");
+		tags->setDisk(1, 1);
+		tags->setGenre("Genre");
+		tags->setTitle("Title");
+		tags->setTrack(i + 1, numTracks);
+		tags->setYear(1993);
+
+		tags->setAlbumSort("AlbumSort");
+		tags->setAlbumArtistSort("AlbumArtistSort");
+		tags->setArtistSort("ArtistSort");
+		tags->setBPM(120);
+		tags->setComposerSort("ComposerSort");
+		tags->setTitleSort("TitleSort");
 
 		char * filename = (char *) calloc(strlen("Track") + STRLEN_INT(i + 1) + 1, sizeof(char));
 		sprintf_s(filename, sizeof(char) * (strlen("Track") + STRLEN_INT(i + 1) + 1), "%s%d", "Track", i + 1);
