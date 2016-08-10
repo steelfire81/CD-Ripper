@@ -2,97 +2,110 @@
 
 // setAlbum
 // Set the album title
-void MP3Tags::setAlbum(char * a)
+char * MP3Tags::setAlbum(char * a)
 {
 	album = a;
+	return album;
 }
 
 // setAlbumSort
 // Set the sort album
-void MP3Tags::setAlbumSort(char * as)
+char * MP3Tags::setAlbumSort(char * as)
 {
 	albumSort = as;
+	return albumSort;
 }
 
 // setAlbumArtist
 // Set the album artist
-void MP3Tags::setAlbumArtist(char * aa)
+char * MP3Tags::setAlbumArtist(char * aa)
 {
 	albumArtist = aa;
+	return albumArtist;
 }
 
 // setAlbumArtistSort
 // Set the sort album artist
-void MP3Tags::setAlbumArtistSort(char * aas)
+char * MP3Tags::setAlbumArtistSort(char * aas)
 {
 	albumArtistSort = aas;
+	return albumArtistSort;
 }
 
 // setArtist
 // Set the artist
-void MP3Tags::setArtist(char * a)
+char * MP3Tags::setArtist(char * a)
 {
 	artist = a;
+	return artist;
 }
 
 // setArtistSort
 // Set the sort artist
-void MP3Tags::setArtistSort(char * as)
+char * MP3Tags::setArtistSort(char * as)
 {
 	artistSort = as;
+	return artistSort;
 }
 
 // setBPM
 // Set the BPM
-void MP3Tags::setBPM(int b)
+char * MP3Tags::setBPM(int b)
 {
 	bpm = (char *) calloc(STRLEN_INT(b) + 1, sizeof(char));
 	sprintf_s(bpm, sizeof(char) * (STRLEN_INT(b) + 1), "%d", b);
+	return bpm;
 }
 
 // setComment
 // Set the comment
-void MP3Tags::setComment(char * c)
+char * MP3Tags::setComment(char * c)
 {
 	comment = c;
+	return comment;
 }
 
 // setCompilation
 // Set whether or not this is a compilation
-void MP3Tags::setCompilation(BOOL c)
+char * MP3Tags::setCompilation(BOOL c)
 {
 	if (c)
 		compilation = "1";
+
+	return compilation;
 }
 
 // setComposer
 // Set the composer
-void MP3Tags::setComposer(char * c)
+char * MP3Tags::setComposer(char * c)
 {
 	composer = c;
 }
 
 // setComposerSort
 // Set the sort composer
-void MP3Tags::setComposerSort(char * cs)
+char * MP3Tags::setComposerSort(char * cs)
 {
 	composerSort = cs;
+	return composerSort;
 }
 
 // setDisk
 // Set the disk number
-void MP3Tags::setDisk(int d)
+char * MP3Tags::setDisk(int d)
 {
 	if (d > 0)
 	{
 		disk = (char *) calloc(STRLEN_INT(d) + 1, sizeof(char));
 		sprintf_s(disk, sizeof(char) * (STRLEN_INT(d) + 1), "%d", d);
 	}
+
+	return disk;
 }
 
 // setDisk
 // Set the disk number and total number of disks
-void MP3Tags::setDisk(int d, int dTotal)
+char * MP3Tags::setDisk(int d, int dTotal)
 {
 	if ((d > 0) && (dTotal > 0) && (dTotal >= d))
 	{
@@ -100,43 +113,50 @@ void MP3Tags::setDisk(int d, int dTotal)
 		sprintf_s(disk, sizeof(char) * (STRLEN_INT(d) + STRLEN_INT(dTotal) + 2), "%d/%d", d,
 			dTotal);
 	}
+
+	return disk;
 }
 
 // setGenre
 // Set the genre
-void MP3Tags::setGenre(char * g)
+char * MP3Tags::setGenre(char * g)
 {
 	genre = g;
+	return genre;
 }
 
 // setTitle
 // Set the title
-void MP3Tags::setTitle(char * t)
+char * MP3Tags::setTitle(char * t)
 {
 	title = t;
+	return title;
 }
 
 // setTitleSort
 // Set the sort title
-void MP3Tags::setTitleSort(char * ts)
+char * MP3Tags::setTitleSort(char * ts)
 {
 	titleSort = ts;
+	return titleSort;
 }
 
 // setTrack
 // Set the track number
-void MP3Tags::setTrack(int t)
+char * MP3Tags::setTrack(int t)
 {
 	if (t > 0)
 	{
 		track = (char *) calloc(STRLEN_INT(t) + 1, sizeof(char));
 		sprintf_s(track, sizeof(char) * (STRLEN_INT(t) + 1), "%d", t);
 	}
+
+	return track;
 }
 
 // setTrack
 // Set the track number and total number of tracks
-void MP3Tags::setTrack(int t, int tTotal)
+char * MP3Tags::setTrack(int t, int tTotal)
 {
 	if ((t > 0) && (tTotal > 0) && (tTotal >= t))
 	{
@@ -144,17 +164,21 @@ void MP3Tags::setTrack(int t, int tTotal)
 		sprintf_s(track, sizeof(char) * (STRLEN_INT(t) + STRLEN_INT(tTotal) + 2), "%d/%d", t,
 			tTotal);
 	}
+
+	return track;
 }
 
 // setYear
 // Set the year
-void MP3Tags::setYear(int y)
+char * MP3Tags::setYear(int y)
 {
 	if ((y > 0) && (y < 10000))
 	{
 		year = (char *) calloc(5, sizeof(char));
 		sprintf_s(year, sizeof(char) * 5, "%04d", y);
 	}
+
+	return year;
 }
 
 // convertToID3FrameList
