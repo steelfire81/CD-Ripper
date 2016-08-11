@@ -80,6 +80,7 @@ char * MP3Tags::setCompilation(BOOL c)
 char * MP3Tags::setComposer(char * c)
 {
 	composer = c;
+	return composer;
 }
 
 // setComposerSort
@@ -225,8 +226,8 @@ ID3_FRAME_NODE * MP3Tags::convertToID3FrameList()
 	}
 	if (comment != NULL)
 	{
-		// TODO: Generate comment-specific frame
-		fprintf_s(stderr, "ERROR: NOT CONFIGURED TO WRITE COMMENT FRAME YET\n");
+		curr->next = generateID3FrameNode(new ID3CommentFrame(ID3_ENCODING_ISO, ID3_COMMENT_LANGUAGE_ENGLISH, comment));
+		curr = curr->next;
 	}
 	if (compilation != NULL)
 	{

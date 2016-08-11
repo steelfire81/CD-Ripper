@@ -62,6 +62,13 @@ long ID3Frame::getTotalFrameSize()
 	return size + ID3_FRAME_HEADER_LENGTH;
 }
 
+// getDataSize
+// Return the length of the data in this frame
+long ID3Frame::getDataSize()
+{
+	return strlen(data);
+}
+
 //*** OTHER METHODS ***//
 // generateID3FrameNode
 // Create an ID3FrameNode from an ID3Frame

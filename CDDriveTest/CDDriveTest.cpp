@@ -46,6 +46,8 @@ int main()
 		tags->setComposerSort("ComposerSort");
 		tags->setTitleSort("TitleSort");
 
+		tags->setComment("This is a comment.");
+
 		char * filename = (char *) calloc(strlen("Track") + STRLEN_INT(i + 1) + 1, sizeof(char));
 		sprintf_s(filename, sizeof(char) * (strlen("Track") + STRLEN_INT(i + 1) + 1), "%s%d", "Track", i + 1);
 		BOOL result = CDDriveExtractTrackToMP3(cdDriveHandles[selectedDrive], tracks[i], ".", filename, tags);

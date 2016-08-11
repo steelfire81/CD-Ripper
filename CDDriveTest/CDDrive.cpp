@@ -128,7 +128,7 @@ BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char *
 		WriteFile(outFile, &flag1, 1, &bytesWritten, NULL);
 		WriteFile(outFile, &flag2, 1, &bytesWritten, NULL);
 		WriteFile(outFile, &encoding, 1, &bytesWritten, NULL);
-		WriteFile(outFile, frame->getData(), strlen(frame->getData()), &bytesWritten, NULL);
+		WriteFile(outFile, frame->getData(), frame->getDataSize(), &bytesWritten, NULL);
 
 		curr = curr->next;
 	}

@@ -34,7 +34,7 @@
 // Class for storing relevant information for writing an ID3 frame
 class ID3Frame
 {
-	private:
+	protected:
 		char * frameID;
 		long size;
 		unsigned char flag1;
@@ -50,6 +50,7 @@ class ID3Frame
 		unsigned char getEncoding();
 		char * getData();
 		long getTotalFrameSize();
+		virtual long getDataSize();
 };
 
 // Structs
