@@ -126,6 +126,14 @@ char * MP3Tags::setGenre(char * g)
 	return genre;
 }
 
+// setGrouping
+// Set the grouping
+char * MP3Tags::setGrouping(char * g)
+{
+	grouping = g;
+	return grouping;
+}
+
 // setTitle
 // Set the title
 char * MP3Tags::setTitle(char * t)
@@ -252,6 +260,11 @@ ID3_FRAME_NODE * MP3Tags::convertToID3FrameList()
 	if (genre != NULL)
 	{
 		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_GENRE, ID3_ENCODING_ISO, genre));
+		curr = curr->next;
+	}
+	if (grouping != NULL)
+	{
+		curr->next = generateID3FrameNode(new ID3Frame(ID3_FRAME_GROUPING, ID3_ENCODING_ISO, grouping));
 		curr = curr->next;
 	}
 	if (title != NULL)

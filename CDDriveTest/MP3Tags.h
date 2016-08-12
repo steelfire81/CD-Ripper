@@ -20,6 +20,7 @@ class MP3Tags
 		char * composerSort;
 		char * disk;
 		char * genre;
+		char * grouping;
 		char * title;
 		char * titleSort;
 		char * track;
@@ -39,6 +40,7 @@ class MP3Tags
 		char * setDisk(int d);
 		char * setDisk(int d, int dTotal);
 		char * setGenre(char * g);
+		char * setGrouping(char * g);
 		char * setTitle(char * t);
 		char * setTitleSort(char * ts);
 		char * setTrack(int t);
