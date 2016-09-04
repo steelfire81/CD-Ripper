@@ -53,8 +53,8 @@ HANDLE * CDDriveGetHandles();
 // Individual Drive Functions
 BOOL CDDriveCheckTray(HANDLE cdDrive);
 BOOL CDDriveCloseTray(HANDLE cdDrive);
-BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char * filename, MP3Tags * tags);
-BOOL CDDriveExtractTrackToWAV(HANDLE cdDrive, CD_TRACK track, char * dir, char * filename);
+BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char * filename, MP3Tags * tags, CDProgressListener * listener);
+BOOL CDDriveExtractTrackToWAV(HANDLE cdDrive, CD_TRACK track, char * dir, char * filename, CDProgressListener * listener);
 BOOL CDDriveOpenTray(HANDLE cdDrive);
 unsigned char * CDDriveReadRawTrack(HANDLE cdDrive, CD_TRACK track);
 CDROM_TOC CDDriveRetrieveTOC(HANDLE cdDrive);

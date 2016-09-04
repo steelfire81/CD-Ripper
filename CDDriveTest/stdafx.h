@@ -20,6 +20,7 @@
 #include "ID3Block.h"
 #include "MP3Tags.h"
 #include "CDDrive.h"
+#include "CDProgressListener.h"
 
 // Constants
 #define SYNCHSAFE_MASK 127 // 01111111

@@ -63,7 +63,7 @@ BOOL CDDriveCloseTray(HANDLE cdDrive)
 
 // CDDriveExtractTrackToMP3
 // Extracts a track from a CD drive and saves it as an MP3
-BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char * filename, MP3Tags * tags)
+BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char * filename, MP3Tags * tags, CDProgressListener * listener)
 {
 	char * path = getFilePath(dir, filename, EXT_MP3);
 	HANDLE outFile = CreateFile(cStringToLPCWSTR(path), GENERIC_WRITE, 0, NULL, CREATE_NEW,
@@ -274,7 +274,7 @@ BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char *
 
 // CDDriveExtractTrackToWAV
 // Extracts a track from a CD drive and saves it as a WAV
-BOOL CDDriveExtractTrackToWAV(HANDLE cdDrive, CD_TRACK track, char * dir, char * filename)
+BOOL CDDriveExtractTrackToWAV(HANDLE cdDrive, CD_TRACK track, char * dir, char * filename, CDProgressListener * listener)
 {
 	char * path = getFilePath(dir, filename, EXT_WAV);
 	HANDLE outFile = CreateFile(cStringToLPCWSTR(path), GENERIC_WRITE, 0, NULL, CREATE_NEW,
