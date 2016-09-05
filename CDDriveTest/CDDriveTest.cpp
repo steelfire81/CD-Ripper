@@ -20,6 +20,8 @@ int main()
 	CDROM_TOC toc = CDDriveRetrieveTOC(cdDriveHandles[selectedDrive]);
 	CD_TRACK * tracks = CDGetTracksFromTOC(toc);
 
+	CDPLBasic * listener = new CDPLBasic();
+
 	int numTracks = toc.LastTrack - toc.FirstTrack + 1;
 	for (int i = 0; i < numTracks; i++)
 	{
@@ -52,7 +54,7 @@ int main()
 
 		char * filename = (char *) calloc(strlen("Track") + STRLEN_INT(i + 1) + 1, sizeof(char));
 		sprintf_s(filename, sizeof(char) * (strlen("Track") + STRLEN_INT(i + 1) + 1), "%s%d", "Track", i + 1);
-		BOOL result = CDDriveExtractTrackToMP3(cdDriveHandles[selectedDrive], tracks[i], ".", filename, tags);
+		BOOL result = CDDriveExtractTrackToMP3(cdDriveHandles[selectedDrive], tracks[i], ".", filename, tags, listener);
 		if (result)
 			printf("\tExtracted track to MP3\n");
 		else

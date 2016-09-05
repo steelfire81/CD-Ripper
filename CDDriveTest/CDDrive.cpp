@@ -99,6 +99,10 @@ BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char *
 		return FALSE;
 	}
 
+	// Notify listener track import has started
+	if (listener != NULL)
+		listener->notifyStart();
+
 	// Write ID3 header
 	DWORD bytesWritten = 0;
 	ID3Block * id3Block = new ID3Block(tags->convertToID3FrameList());
@@ -268,6 +272,9 @@ BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char *
 	free(path);
 	free(data);
 	lame_close(lameFlags);
+
+	// Notify listener track import has ended
+	listener->notifyEnd();
 
 	return CloseHandle(outFile);
 }
