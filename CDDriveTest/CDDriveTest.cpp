@@ -2,6 +2,43 @@
 
 #include "stdafx.h"
 
+// getTrackTags
+// Retrieve tags for a specified CD track
+static MP3Tags * getTrackTags(int trackNumber)
+{
+	MP3Tags * tags = new MP3Tags();
+
+	char * title;
+	
+	// TODO: Retrieve these from a UI instead of using fixed values
+	switch (trackNumber)
+	{
+		case 0:
+			title = "Cherub Rock";
+			break;
+		case 1:
+			title = "Pissant";
+			break;
+		case 2:
+			title = "French Movie Theme";
+			break;
+		default:
+			title = "This Track Doesn't Exist";
+			break;
+	}
+
+	tags->setTitle(title);
+
+	return tags;
+}
+
+// freeTrackTags
+// Free space allocated to a set of tags
+static void freeTrackTags(MP3Tags * tags)
+{
+	delete tags;
+}
+
 // main
 int main()
 {
@@ -29,31 +66,25 @@ int main()
 		printf("\tStart: %ld frames\n", tracks[i].startAddress);
 		printf("\tDuration: %ld frames\n", tracks[i].duration);
 		
-		MP3Tags * tags = new MP3Tags();
-		tags->setAlbum("Album");
-		tags->setAlbumArtist("AlbumArtist");
-		tags->setArtist("Artist");
-		tags->setCompilation(TRUE);
-		tags->setComposer("Composer");
-		tags->setDisk(1, 1);
-		tags->setGenre("Genre");
-		tags->setTitle("Title");
+		// Set track-specific tags
+		MP3Tags * tags = getTrackTags(i);
+
+		// Set tags dependent on entire album
+		// TODO: Allow these to be customizable per-track as well
+		// TODO: Retrieve these from UI as well
+		tags->setArtist("Smashing Pumpkins");
+		tags->setAlbum("Cherub Rock - Single");
 		tags->setTrack(i + 1, numTracks);
 		tags->setYear(1993);
+		tags->setGenre("Alternative Rock");
+		tags->setDisk(1, 1);
 
-		tags->setAlbumSort("AlbumSort");
-		tags->setAlbumArtistSort("AlbumArtistSort");
-		tags->setArtistSort("ArtistSort");
-		tags->setBPM(120);
-		tags->setComposerSort("ComposerSort");
-		tags->setTitleSort("TitleSort");
-
-		tags->setComment("This is a comment.");
-
-		tags->setGrouping("Grouping");
-
-		char * filename = (char *) calloc(strlen("Track") + STRLEN_INT(i + 1) + 1, sizeof(char));
+		// Format filename
+		// TODO: Extract this to separate function
+		// TODO: Use tags to build filename in format specifiable by user
+		char * filename = (char *)calloc(strlen("Track") + STRLEN_INT(i + 1) + 1, sizeof(char));
 		sprintf_s(filename, sizeof(char) * (strlen("Track") + STRLEN_INT(i + 1) + 1), "%s%d", "Track", i + 1);
+
 		BOOL result = CDDriveExtractTrackToMP3(cdDriveHandles[selectedDrive], tracks[i], ".", filename, tags, listener);
 		if (result)
 			printf("\tExtracted track to MP3\n");
@@ -61,6 +92,7 @@ int main()
 			printf("\tCould not extract track %d\n", i + 1);
 
 		free(filename);
+		delete tags;
 	}
 	printf("ALL TASKS COMPLETED\n");
 

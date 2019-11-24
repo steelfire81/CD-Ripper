@@ -1,5 +1,7 @@
 #include "stdafx.h"
 
+// TODO: Refactor this to make adding new fields simpler
+
 // setAlbum
 // Set the album title
 char * MP3Tags::setAlbum(char * a)
