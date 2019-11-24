@@ -4,7 +4,7 @@
 
 #define CDPLB_INTERVAL 5
 
-class CDPLBasic : CDProgressListener {
+class CDPLBasic : public CDProgressListener {
 	public:
 		CDPLBasic();
 		void notifyEnd();

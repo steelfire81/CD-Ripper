@@ -19,9 +19,9 @@
 #include "ID3CommentFrame.h"
 #include "ID3Block.h"
 #include "MP3Tags.h"
-#include "CDDrive.h"
 #include "CDProgressListener.h"
 #include "CDPLBasic.h"
+#include "CDDrive.h"
 
 // Constants
 #define SYNCHSAFE_MASK 127 // 01111111
