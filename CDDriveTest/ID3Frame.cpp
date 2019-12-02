@@ -2,20 +2,20 @@
 
 // Constructor
 // Convert and store tag data as an ID3Frame
-ID3Frame::ID3Frame(char * id, unsigned char e, char * d)
+ID3Frame::ID3Frame(string id, unsigned char e, string d)
 {
 	frameID = id;
 	encoding = e;
 	data = d;
 
-	size = strlen(d) + 1;
+	size = d.length() + 1;
 	flag1 = ID3_FRAME_FLAGS_1;
 	flag2 = ID3_FRAME_FLAGS_2;
 }
 
 // getFrameID
 // Return this frame's 4 character identifier
-char * ID3Frame::getFrameID()
+string ID3Frame::getFrameID()
 {
 	return frameID;
 }
@@ -50,7 +50,7 @@ unsigned char ID3Frame::getEncoding()
 
 // getData
 // Return this frame's data block (minus encoding)
-char * ID3Frame::getData()
+string ID3Frame::getData()
 {
 	return data;
 }
@@ -66,7 +66,7 @@ long ID3Frame::getTotalFrameSize()
 // Return the length of the data in this frame
 long ID3Frame::getDataSize()
 {
-	return strlen(data);
+	return data.length();
 }
 
 //*** OTHER METHODS ***//

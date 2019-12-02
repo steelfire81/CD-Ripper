@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stdafx.h"
+using namespace std;
 
 // Constants - Encoding
 #define ID3_ENCODING_ISO 0
@@ -36,20 +37,20 @@
 class ID3Frame
 {
 	protected:
-		char * frameID;
+		string frameID;
 		long size;
 		unsigned char flag1;
 		unsigned char flag2;
 		unsigned char encoding;
-		char * data;
+		string data;
 	public:
-		ID3Frame(char * id, unsigned char e, char * d);
-		char * getFrameID();
+		ID3Frame(string id, unsigned char e, string d);
+		string getFrameID();
 		long getFormattedSize();
 		unsigned char getFlag1();
 		unsigned char getFlag2();
 		unsigned char getEncoding();
-		char * getData();
+		string getData();
 		long getTotalFrameSize();
 		virtual long getDataSize();
 };

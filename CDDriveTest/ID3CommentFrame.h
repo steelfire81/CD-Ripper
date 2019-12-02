@@ -1,6 +1,7 @@
 #pragma once
 
 #include "stdafx.h"
+using namespace std;
 
 // Constants
 #define ID3_COMMENT_DESCRIPTOR_DEFAULT 0
@@ -9,6 +10,6 @@
 class ID3CommentFrame : public ID3Frame
 {
 	public:
-		ID3CommentFrame(unsigned char e, char * l, char * d);
+		ID3CommentFrame(unsigned char e, string lang, string d);
 		virtual long getDataSize();
 };

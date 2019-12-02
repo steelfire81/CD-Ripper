@@ -14,6 +14,10 @@
 #include <Windows.h>
 #include <Ntddcdrm.h>
 #include <math.h>
+#include <string>
+#include <iostream>
+#include <unordered_map>
+
 #include "../include/lame.h"
 #include "ID3Frame.h"
 #include "ID3CommentFrame.h"

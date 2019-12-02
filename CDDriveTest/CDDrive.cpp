@@ -127,12 +127,12 @@ BOOL CDDriveExtractTrackToMP3(HANDLE cdDrive, CD_TRACK track, char * dir, char *
 		unsigned char flag1 = frame->getFlag1();
 		unsigned char flag2 = frame->getFlag2();
 		unsigned char encoding = frame->getEncoding();
-		WriteFile(outFile, frame->getFrameID(), 4, &bytesWritten, NULL);
+		WriteFile(outFile, frame->getFrameID().c_str(), 4, &bytesWritten, NULL);
 		WriteFile(outFile, &formattedFrameSize, 4, &bytesWritten, NULL);
 		WriteFile(outFile, &flag1, 1, &bytesWritten, NULL);
 		WriteFile(outFile, &flag2, 1, &bytesWritten, NULL);
 		WriteFile(outFile, &encoding, 1, &bytesWritten, NULL);
-		WriteFile(outFile, frame->getData(), frame->getDataSize(), &bytesWritten, NULL);
+		WriteFile(outFile, frame->getData().c_str(), frame->getDataSize(), &bytesWritten, NULL);
 
 		curr = curr->next;
 	}
